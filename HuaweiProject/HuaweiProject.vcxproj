@@ -151,7 +151,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="HuaweiProject.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataManager.h" />
+    <ClInclude Include="definition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
