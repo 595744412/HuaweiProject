@@ -3,10 +3,10 @@
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
 */
-void DataManager::ReadAll(const string& filePath)
+void DataManager::ReadAll()
 {
 	FILE *stream;
-	freopen_s(&stream, filePath.c_str(), "r", stdin);
+	freopen_s(&stream, "./training-1.txt", "r", stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
