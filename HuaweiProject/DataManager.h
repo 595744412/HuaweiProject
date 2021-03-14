@@ -13,8 +13,8 @@ public:
 	vector<RequestType> requestList[1000];
 	//虚拟机map
 	unordered_map<unsigned int, Vmware> vmwareList;
-	//服务器map
-	unordered_map<unsigned int, Server> vmwareList;
+	//服务器列表
+	vector<Server> serverList;
 	//读取所有数据
 	void ReadAll(const string& filePath);
 };
