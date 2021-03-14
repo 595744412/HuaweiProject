@@ -6,7 +6,7 @@
 void DataManager::ReadAll(const string& filePath)
 {
 	FILE *stream;
-	freopen_s(&stream,filePath.c_str(), "r" , stdin);
+	freopen_s(&stream, filePath.c_str(), "r", stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -16,7 +16,7 @@ void DataManager::ReadAll(const string& filePath)
 	for (int i = 0; i < num; i++) {
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, size(serverName) - 2);
-		this->serverTypeList[serverName] = ServerType(serverName, cores, memory, price, costPerDay);
+		this->serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
 	}
 	//读入虚拟机信息
 	cin >> num;

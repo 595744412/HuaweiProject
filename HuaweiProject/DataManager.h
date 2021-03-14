@@ -11,6 +11,12 @@ public:
 	unordered_map<string, VmwareType> vmwareTypeList;
 	//每日请求列表[天数][请求序号]
 	vector<RequestType> requestList[1000];
+	//每日购买服务器列表[天数][型号]
+	unordered_map<string, unsigned int> purchaseList[1000];
+	//每日迁移虚拟机列表[天数][迁移序号]
+	vector<MoveData> moveList[1000];
+	//每日迁移虚拟机列表[天数][迁移序号]
+	vector<AddData> addList[1000];
 	//虚拟机map
 	unordered_map<unsigned int, Vmware> vmwareList;
 	//服务器列表

@@ -7,6 +7,7 @@ using namespace std;
 
 class DataManager;
 class Server;
+class Controller;
 extern DataManager dataManager;
 
 //服务器类型
@@ -63,7 +64,7 @@ struct Vmware
 	VmwareType myType;
 	//存储服务器编号（-1为未分配）
 	unsigned int serverID = -1;
-	//是否存储在A核（否存储在B核）
+	//是否存储在A节点（否存储在B节点）
 	bool isNodeA = true;
 };
 
@@ -82,3 +83,26 @@ struct NodeData
 	unordered_map<unsigned int, Vmware> vmwares;
 };
 
+//迁移操作数据
+struct MoveData
+{
+	//虚拟机id
+	unsigned int vmwareID;
+	//服务器id
+	unsigned int serverID;
+	//是否双节点部署
+	bool isDouble;
+	//是否迁入节点A（否迁入节点B）
+	bool isNodeA;
+};
+
+//部署虚拟机操作数据
+struct AddData
+{
+	//服务器id
+	unsigned int serverID;
+	//是否双节点部署
+	bool isDouble;
+	//是否部署节点A（否部署节点B）
+	bool isNodeA;
+};
