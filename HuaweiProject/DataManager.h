@@ -16,6 +16,5 @@ public:
 	//服务器map
 	unordered_map<unsigned int, Server> vmwareList;
 	//读取所有数据
-	void ReadAll();
+	void ReadAll(const string& filePath);
 };
-

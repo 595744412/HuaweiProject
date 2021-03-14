@@ -19,6 +19,8 @@ struct ServerType
 	unsigned int price;
 	//每日能耗成本
 	unsigned int costPerDay;
+	ServerType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, unsigned int _price=0, unsigned int _costPerDay=0) :
+		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {}
 };
 
 //虚拟机类型
@@ -32,6 +34,8 @@ struct VmwareType
 	unsigned int memory;
 	//是否双节点部署
 	bool isDouble;
+	VmwareType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, bool _isDouble=true):
+		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {}
 };
 
 //请求类型
@@ -43,6 +47,8 @@ struct RequestType
 	string name;
 	//虚拟机ID
 	unsigned int ID;
+	RequestType(bool _isAdd=true, string _name=" ", unsigned int _ID=0) :
+		isAdd(_isAdd), name(_name), ID(_ID) {}
 };
 
 //服务器单核数据
