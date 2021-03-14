@@ -5,6 +5,7 @@
 */
 void DataManager::ReadAll(const string& filePath)
 {
+	freopen(filePath.c_str(), "r", stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
