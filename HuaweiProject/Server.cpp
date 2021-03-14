@@ -1,5 +1,7 @@
 #include "Server.h"
+#include "DataManager.h"
 
+unsigned int Server::count = 0;
 
 void Server::AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node)
 {

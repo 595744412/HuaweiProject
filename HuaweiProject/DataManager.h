@@ -18,3 +18,4 @@ public:
 	//读取所有数据
 	void ReadAll(const string& filePath);
 };
+

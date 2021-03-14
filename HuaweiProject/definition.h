@@ -1,10 +1,13 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <unordered_map>
 #include <vector>
-#include "Server.h"
-#include "DataManager.h"
 using namespace std;
+
+class DataManager;
+class Server;
+extern DataManager dataManager;
 
 //服务器类型
 struct ServerType
@@ -19,7 +22,7 @@ struct ServerType
 	unsigned int price;
 	//每日能耗成本
 	unsigned int costPerDay;
-	ServerType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, unsigned int _price=0, unsigned int _costPerDay=0) :
+	ServerType(string _name = " ", unsigned int _cores = 0, unsigned int _memory = 0, unsigned int _price = 0, unsigned int _costPerDay = 0) :
 		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {}
 };
 
@@ -51,21 +54,6 @@ struct RequestType
 		isAdd(_isAdd), name(_name), ID(_ID) {}
 };
 
-//服务器单核数据
-struct NodeData
-{
-	//已占用CPU核数
-	unsigned int usedCores;
-	//剩余CPU核数
-	unsigned int unusedCores;
-	//已占用内存
-	unsigned int usedMemory;
-	//剩余内存
-	unsigned int unusedMemory;
-	//已存放虚拟机
-	unordered_map<unsigned int, Vmware&> vmwares;
-};
-
 //虚拟机信息
 struct Vmware
 {
@@ -78,3 +66,19 @@ struct Vmware
 	//是否存储在A核（否存储在B核）
 	bool isNodeA = true;
 };
+
+//服务器单核数据
+struct NodeData
+{
+	//已占用CPU核数
+	unsigned int usedCores;
+	//剩余CPU核数
+	unsigned int unusedCores;
+	//已占用内存
+	unsigned int usedMemory;
+	//剩余内存
+	unsigned int unusedMemory;
+	//已存放虚拟机
+	unordered_map<unsigned int, Vmware> vmwares;
+};
+

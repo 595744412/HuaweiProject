@@ -1,6 +1,7 @@
 #pragma once
 #include "definition.h"
-extern DataManager dataManager;
+
+
 
 //·şÎñÆ÷
 class Server
@@ -37,5 +38,5 @@ public:
 
 };
 
-unsigned int Server::count = 0;
+
 
