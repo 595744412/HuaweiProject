@@ -2,11 +2,13 @@
 /*
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
+   如果提交的话，将前三行，和最后一行注释掉。
 */
-void DataManager::ReadAll(const string& filePath)
+void DataManager::ReadAll()
 {
+	string filePath = "./training-1.txt";
 	FILE *stream;
-	freopen_s(&stream,filePath.c_str(), "r" , stdin);
+	freopen_s(&stream, filePath.c_str(), "r" , stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -45,4 +47,5 @@ void DataManager::ReadAll(const string& filePath)
 			}
 		}
 	}
+	fclose(stdin);
 }
