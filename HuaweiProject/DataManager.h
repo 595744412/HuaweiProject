@@ -28,4 +28,3 @@ public:
 	//Êä³ö²Ù×÷
 	void OutputAll();
 };
-

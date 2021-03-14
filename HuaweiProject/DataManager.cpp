@@ -16,14 +16,14 @@ void DataManager::ReadAll()
 	for (int i = 0; i < num; i++) {
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, size(serverName) - 2);
-		this->serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
+		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
 	}
 	//读入虚拟机信息
 	cin >> num;
 	for (int i = 0; i < num; i++) {
 		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
 		vmwareName = vmwareName.substr(1, size(vmwareName) - 2);
-		this->vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
+		vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
 	}
 	//读入请求
 	int days;
@@ -38,21 +38,55 @@ void DataManager::ReadAll()
 			if (requestName == "add") {
 				cin >> vmwareName >> ID >> buff;
 				vmwareName = vmwareName.substr(0, size(vmwareName) - 1);
-				this->requestList[i].emplace_back(true, vmwareName, ID);
+				requestList[i].emplace_back(true, vmwareName, ID);
 				vmwareList[ID].id = ID;
 				vmwareList[ID].myType = vmwareTypeList[vmwareName];
 			}
 			else {
 				cin >> ID >> buff;
-				this->requestList[i].emplace_back(false, " ", ID);
+				requestList[i].emplace_back(false, " ", ID);
 			}
 		}
 	}
 	fclose(stdin);
 }
 
+/*
+	把purchaseList、moveList和addList按每天的顺序输出
+*/
 void DataManager::OutputAll()
 {
-	//把purchaseList、moveList和addList按每天的顺序输出
+	for (int i = 0; i < dayCounts; i++) {
+		//输出购买服务器
+		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
+		for (auto j = purchaseList[i].cbegin(); j != purchaseList[i].cend(); j++) {
+			cout << "(" + j->first + ", " << j->second << ")" << endl;
+		}
+		//输出迁移虚拟机
+		cout << "(purchase, " << moveList[i].size() << ")" << endl;
+		for (auto j = moveList[i].cbegin(); j != moveList[i].cend(); j++) {
+			if (j->isDouble) {
+				cout << "(" << j->vmwareID << ", " << j->serverID << ")" << endl;
+			}
+			else {
+				if (j->isNodeA)
+					cout << "(" << j->vmwareID << ", " << j->serverID << ", A)" << endl;
+				else
+					cout << "(" << j->vmwareID << ", " << j->serverID << ", B)" << endl;
+			}
+		}
+		//输出创建请求
+		for (auto j = addList[i].cbegin(); j != addList[i].cend(); j++) {
 
+			if (j->isDouble) {
+				cout << "(" << j->serverID << ")" << endl;
+			}
+			else {
+				if (j->isNodeA)
+					cout << "(" << j->serverID << ", A)" << endl;
+				else
+					cout << "(" << j->serverID << ", B)" << endl;
+			}
+		}
+	}
 }
