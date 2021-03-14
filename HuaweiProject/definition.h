@@ -46,7 +46,7 @@ struct RequestType
 };
 
 //服务器单核数据
-struct CoreData
+struct NodeData
 {
 	//已占用CPU核数
 	unsigned int usedCores;
@@ -56,8 +56,8 @@ struct CoreData
 	unsigned int usedMemory;
 	//剩余内存
 	unsigned int unusedMemory;
-	//已存放虚拟机id
-	vector<unsigned int> vmwares;
+	//已存放虚拟机
+	unordered_map<unsigned int, Vmware&> vmwares;
 };
 
 //虚拟机信息
@@ -68,7 +68,7 @@ struct Vmware
 	//虚拟机类型
 	VmwareType myType;
 	//存储服务器编号（-1为未分配）
-	int serverID = -1;
+	unsigned int serverID = -1;
 	//是否存储在A核（否存储在B核）
-	bool isCoreA = true;
+	bool isNodeA = true;
 };
