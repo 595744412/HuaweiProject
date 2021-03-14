@@ -5,7 +5,7 @@
 using namespace std;
 
 //服务器类型
-struct SeverType
+struct ServerType
 {
 	//服务器型号
 	string name;

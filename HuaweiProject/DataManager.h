@@ -3,7 +3,7 @@
 class DataManager
 {
 	//服务器类型map
-	unordered_map<string, SeverType> severTypeList;
+	unordered_map<string, ServerType> serverTypeList;
 	//虚拟机类型map
 	unordered_map<string, VmwareType> vmwareTypeList;
 	//每日请求列表[天数][请求序号]
