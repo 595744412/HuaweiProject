@@ -2,5 +2,5 @@
 
 void DataManager::ReadAll()
 {
-	//按顺序读取所有顺序存在severTypeList、vmwareTypeList和requestList中
+	//按顺序读取所有数据存在severTypeList、vmwareTypeList和requestList中
 }
