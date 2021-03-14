@@ -2,6 +2,8 @@
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include "Server.h"
+#include "DataManager.h"
 using namespace std;
 
 //服务器类型
@@ -43,3 +45,30 @@ struct RequestType
 	unsigned int ID;
 };
 
+//服务器单核数据
+struct CoreData
+{
+	//已占用CPU核数
+	unsigned int usedCores;
+	//剩余CPU核数
+	unsigned int unusedCores;
+	//已占用内存
+	unsigned int usedMemory;
+	//剩余内存
+	unsigned int unusedMemory;
+	//已存放虚拟机id
+	vector<unsigned int> vmwares;
+};
+
+//虚拟机信息
+struct Vmware
+{
+	//虚拟机ID
+	unsigned int id;
+	//虚拟机类型
+	VmwareType myType;
+	//存储服务器编号（-1为未分配）
+	int serverID = -1;
+	//是否存储在A核（否存储在B核）
+	bool isCoreA = true;
+};
