@@ -28,16 +28,19 @@ void DataManager::ReadAll()
 	//¶ÁÈëÇëÇó
 	int days;
 	cin >> days;
+	dayCounts = days;
 	for (int i = 0; i < days; i++) {
 		cin >> num;
 		for (int j = 0; j < num; j++) {
 			cin >> buff >> requestName;
 			requestName = requestName.substr(0, size(requestName) - 1);
-			int ID;
+			unsigned int ID;
 			if (requestName == "add") {
 				cin >> vmwareName >> ID >> buff;
 				vmwareName = vmwareName.substr(0, size(vmwareName) - 1);
 				this->requestList[i].emplace_back(true, vmwareName, ID);
+				vmwareList[ID].id = ID;
+				vmwareList[ID].myType = vmwareTypeList[vmwareName];
 			}
 			else {
 				cin >> ID >> buff;
