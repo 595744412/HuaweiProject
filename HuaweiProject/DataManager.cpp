@@ -31,8 +31,8 @@ void DataManager::ReadAll()
 	for (int i = 0; i < days; i++) {
 		cin >> num;
 		for (int j = 0; j < num; j++) {
-			cin >> requestName;
-			requestName = vmwareName.substr(1, size(vmwareName) - 2);
+			cin >> buff >> requestName;
+			requestName = requestName.substr(0, size(requestName) - 1);
 			int ID;
 			if (requestName == "add") {
 				cin >> vmwareName >> ID >> buff;
@@ -46,4 +46,10 @@ void DataManager::ReadAll()
 		}
 	}
 	fclose(stdin);
+}
+
+void DataManager::OutputAll()
+{
+	//把purchaseList、moveList和addList按每天的顺序输出
+
 }

@@ -23,5 +23,7 @@ public:
 	vector<Server> serverList;
 	//读取所有数据
 	void ReadAll();
+	//输出操作
+	void OutputAll();
 };
 
