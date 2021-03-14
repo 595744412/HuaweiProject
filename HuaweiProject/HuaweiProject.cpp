@@ -6,7 +6,7 @@
 DataManager dataManager;
 int main()
 {
-	dataManager.ReadAll("./training-1.txt");
+	dataManager.ReadAll();
 	Server a(dataManager.serverTypeList["host0Y6DP"]);
 	cout << 1;
 }
