@@ -22,6 +22,6 @@ public:
 	//服务器列表
 	vector<Server> serverList;
 	//读取所有数据
-	void ReadAll();
+	void ReadAll(const string& filePath);
 };
 
