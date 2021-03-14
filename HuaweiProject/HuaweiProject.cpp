@@ -1,6 +1,5 @@
-﻿#include <iostream>
-using namespace std;
+﻿#pragma once
 int main()
 {
-    cout << "Hello World!\n";
+
 }
