@@ -45,4 +45,5 @@ void DataManager::ReadAll(const string& filePath)
 			}
 		}
 	}
+	fclose(stdin);
 }
