@@ -14,14 +14,14 @@ void DataManager::ReadAll(const string& filePath)
 	//读入服务器信息
 	cin >> num;
 	for (int i = 0; i < num; i++) {
-		cin >> serverName >> cores >> memory >> price >> costPerDay >> buff;
+		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, size(serverName) - 2);
 		this->serverTypeList[serverName] = ServerType(serverName, cores, memory, price, costPerDay);
 	}
 	//读入虚拟机信息
 	cin >> num;
 	for (int i = 0; i < num; i++) {
-		cin >> vmwareName >> cores >> memory >> isDouble >> buff;
+		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
 		vmwareName = vmwareName.substr(1, size(vmwareName) - 2);
 		this->vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
 	}
