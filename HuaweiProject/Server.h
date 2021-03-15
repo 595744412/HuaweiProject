@@ -24,11 +24,13 @@ public:
 	//构造函数
 	Server(ServerType serverType);
 	//添加一台虚拟机，返回是否成功
-	bool AddVmware(unsigned int id, bool addToA);
+	bool AddVmware(unsigned int vmwareid, bool addToA);
 	//删除一台虚拟机，返回是否成功
-	bool DeleteVmware(unsigned int id);
+	bool DeleteVmware(unsigned int vmwareid);
 	//获取ID
 	unsigned int GetID() { return id; }
+	//获取count
+	static unsigned int GetCount() { return count; }
 	//获取A核信息
 	NodeData GetA() { return nodeA; }
 	//获取B核信息

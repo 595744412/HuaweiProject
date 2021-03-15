@@ -5,8 +5,8 @@
 */
 void DataManager::ReadAll()
 {
-	FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);
+	/*FILE *stream;
+	freopen_s(&stream, "./training-1.txt", "r", stdin);*/
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -48,7 +48,7 @@ void DataManager::ReadAll()
 			}
 		}
 	}
-	fclose(stdin);
+	/*fclose(stdin);*/
 }
 
 /*
@@ -63,7 +63,7 @@ void DataManager::OutputAll()
 			cout << "(" + j->first + ", " << j->second << ")" << endl;
 		}
 		//Êä³öÇ¨ÒÆÐéÄâ»ú
-		cout << "(purchase, " << moveList[i].size() << ")" << endl;
+		cout << "(migration, " << moveList[i].size() << ")" << endl;
 		for (auto j = moveList[i].cbegin(); j != moveList[i].cend(); j++) {
 			if (j->isDouble) {
 				cout << "(" << j->vmwareID << ", " << j->serverID << ")" << endl;

@@ -27,16 +27,16 @@ Server::Server(ServerType serverType):myType(serverType)
 	nodeB = { 0,myType.cores,0,myType.memory };
 }
 
-bool Server::AddVmware(unsigned int id, bool addToA = true)
+bool Server::AddVmware(unsigned int vmwareid, bool addToA = true)
 {
-	Vmware& myvmware = dataManager.vmwareList[id];
+	Vmware& myvmware = dataManager.vmwareList[vmwareid];
 	VmwareType vmware = myvmware.myType;
 	if (vmware.isDouble) {
 		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory&&nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeA);
 			AddIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeA.vmwares[id] = myvmware;
-			nodeB.vmwares[id] = myvmware;
+			nodeA.vmwares[vmwareid] = myvmware;
+			nodeB.vmwares[vmwareid] = myvmware;
 			myvmware.serverID = id;
 			return true;
 		}
@@ -44,7 +44,7 @@ bool Server::AddVmware(unsigned int id, bool addToA = true)
 	else if(addToA){
 		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeA);
-			nodeA.vmwares[id] = myvmware;
+			nodeA.vmwares[vmwareid] = myvmware;
 			myvmware.serverID = id;
 			myvmware.isNodeA = true;
 			return true;
@@ -53,7 +53,7 @@ bool Server::AddVmware(unsigned int id, bool addToA = true)
 	else {
 		if (nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeB.vmwares[id] = myvmware;
+			nodeB.vmwares[vmwareid] = myvmware;
 			myvmware.serverID = id;
 			myvmware.isNodeA = false;
 			return true;
@@ -62,28 +62,28 @@ bool Server::AddVmware(unsigned int id, bool addToA = true)
 	return false;
 }
 
-bool Server::DeleteVmware(unsigned int id)
+bool Server::DeleteVmware(unsigned int vmwareid)
 {
-	Vmware& myvmware = dataManager.vmwareList[id];
+	Vmware& myvmware = dataManager.vmwareList[vmwareid];
 	VmwareType vmware = myvmware.myType;
 	if (vmware.isDouble) {
-		if (!nodeA.vmwares.count(id) && !nodeB.vmwares.count(id)) {
+		if (!nodeA.vmwares.count(vmwareid) && !nodeB.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeA.vmwares.erase(id);
-			nodeB.vmwares.erase(id);
+			nodeA.vmwares.erase(vmwareid);
+			nodeB.vmwares.erase(vmwareid);
 		}
 	}
 	else if (myvmware.isNodeA) {
-		if (!nodeA.vmwares.count(id)) {
+		if (!nodeA.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
-			nodeA.vmwares.erase(id);
+			nodeA.vmwares.erase(vmwareid);
 		}
 	}
 	else {
-		if (!nodeB.vmwares.count(id)) {
+		if (!nodeB.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeB.vmwares.erase(id);
+			nodeB.vmwares.erase(vmwareid);
 		}
 	}
 	return false;

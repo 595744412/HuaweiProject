@@ -2,10 +2,13 @@
 #include "definition.h"
 #include "Server.h"
 #include "DataManager.h"
+#include "Controller.h"
 
 DataManager dataManager;
 int main()
 {
 	dataManager.ReadAll();
-	cout << 1;
+	Controller controller = Controller();
+	controller.CreateList();
+	dataManager.OutputAll();
 }

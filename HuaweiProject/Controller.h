@@ -5,8 +5,10 @@
 class Controller
 {
 private:
-	//购买一台服务器并添加到列表，返回服务器id
-	unsigned int PurchaseServer(ServerType type);
+	//可能有空间存放的服务器列表
+	vector<unsigned int> usedServerList;
+	//购买一台服务器并添加到列表，返回服务器对象引用
+	Server& PurchaseServer(string type);
 public:
 	//生成输出所需操作列表
 	void CreateList();
