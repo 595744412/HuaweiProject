@@ -56,7 +56,7 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
-	for (int i = 0; i < dayCounts; i++) {
+	for (unsigned int i = 0; i < dayCounts; i++) {
 		//Êä³ö¹ºÂò·þÎñÆ÷
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
 		for (auto j = purchaseList[i].cbegin(); j != purchaseList[i].cend(); j++) {
