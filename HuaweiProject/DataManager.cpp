@@ -5,8 +5,8 @@
 */
 void DataManager::ReadAll()
 {
-	FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);
+	//FILE *stream;
+	//freopen_s(&stream, "./training-1.txt", "r", stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -23,7 +23,10 @@ void DataManager::ReadAll()
 	for (int i = 0; i < num; i++) {
 		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
 		vmwareName = vmwareName.substr(1, vmwareName.size() - 2);
-		vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
+		if(isDouble)
+			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores / 2, memory / 2, true);
+		else
+			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, false);
 	}
 	//读入请求
 	int days;
@@ -48,7 +51,7 @@ void DataManager::ReadAll()
 			}
 		}
 	}
-	fclose(stdin);
+	//fclose(stdin);
 }
 
 /*
@@ -56,6 +59,8 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
+	//FILE* stream;
+	//freopen_s(&stream, "result.txt", "w", stdout);
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
@@ -89,4 +94,5 @@ void DataManager::OutputAll()
 			}
 		}
 	}
+	//fclose(stdout);
 }

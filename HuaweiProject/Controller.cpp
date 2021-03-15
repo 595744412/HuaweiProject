@@ -39,7 +39,7 @@ void Controller::CreateList()
 						}
 					}
 				}
-				AddData it = { dataManager.vmwareList[request.ID].serverID ,dataManager.vmwareList[request.ID].myType.isDouble,dataManager.vmwareList[request.ID].isNodeA };
+				AddData it = { dataManager.vmwareList[request.ID].serverID ,dataManager.vmwareList[request.ID].myType.isDouble, dataManager.vmwareList[request.ID].isNodeA };
 				dataManager.addList[i].emplace_back(it);
 			}
 			else {
