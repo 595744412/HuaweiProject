@@ -35,27 +35,27 @@ bool Server::AddVmware(unsigned int vmwareid, bool addToA = true)
 		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory&&nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeA);
 			AddIntoNode(vmware.cores, vmware.memory, nodeB);
+			myvmware.serverID = id;
 			nodeA.vmwares[vmwareid] = myvmware;
 			nodeB.vmwares[vmwareid] = myvmware;
-			myvmware.serverID = id;
 			return true;
 		}
 	}
 	else if(addToA){
 		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeA);
-			nodeA.vmwares[vmwareid] = myvmware;
 			myvmware.serverID = id;
 			myvmware.isNodeA = true;
+			nodeA.vmwares[vmwareid] = myvmware;
 			return true;
 		}
 	}
 	else {
 		if (nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
 			AddIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeB.vmwares[vmwareid] = myvmware;
 			myvmware.serverID = id;
 			myvmware.isNodeA = false;
+			nodeB.vmwares[vmwareid] = myvmware;
 			return true;
 		}
 	}
@@ -67,7 +67,7 @@ bool Server::DeleteVmware(unsigned int vmwareid)
 	Vmware& myvmware = dataManager.vmwareList[vmwareid];
 	VmwareType vmware = myvmware.myType;
 	if (vmware.isDouble) {
-		if (!nodeA.vmwares.count(vmwareid) && !nodeB.vmwares.count(vmwareid)) {
+		if (nodeA.vmwares.count(vmwareid) && nodeB.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
 			nodeA.vmwares.erase(vmwareid);
@@ -75,13 +75,13 @@ bool Server::DeleteVmware(unsigned int vmwareid)
 		}
 	}
 	else if (myvmware.isNodeA) {
-		if (!nodeA.vmwares.count(vmwareid)) {
+		if (nodeA.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
 			nodeA.vmwares.erase(vmwareid);
 		}
 	}
 	else {
-		if (!nodeB.vmwares.count(vmwareid)) {
+		if (nodeB.vmwares.count(vmwareid)) {
 			DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
 			nodeB.vmwares.erase(vmwareid);
 		}
