@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HuaweiProject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="DataManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -25,6 +22,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Controller.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeCraft-2021.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

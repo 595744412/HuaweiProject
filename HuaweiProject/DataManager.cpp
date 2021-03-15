@@ -5,8 +5,8 @@
 */
 void DataManager::ReadAll()
 {
-	/*FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);*/
+	FILE *stream;
+	freopen_s(&stream, "./training-1.txt", "r", stdin);
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -15,14 +15,14 @@ void DataManager::ReadAll()
 	cin >> num;
 	for (int i = 0; i < num; i++) {
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
-		serverName = serverName.substr(1, size(serverName) - 2);
+		serverName = serverName.substr(1, serverName.size() - 2);
 		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
 	}
 	//读入虚拟机信息
 	cin >> num;
 	for (int i = 0; i < num; i++) {
 		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
-		vmwareName = vmwareName.substr(1, size(vmwareName) - 2);
+		vmwareName = vmwareName.substr(1, vmwareName.size() - 2);
 		vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
 	}
 	//读入请求
@@ -33,11 +33,11 @@ void DataManager::ReadAll()
 		cin >> num;
 		for (int j = 0; j < num; j++) {
 			cin >> buff >> requestName;
-			requestName = requestName.substr(0, size(requestName) - 1);
+			requestName = requestName.substr(0, requestName.size() - 1);
 			unsigned int ID;
 			if (requestName == "add") {
 				cin >> vmwareName >> ID >> buff;
-				vmwareName = vmwareName.substr(0, size(vmwareName) - 1);
+				vmwareName = vmwareName.substr(0, vmwareName.size() - 1);
 				requestList[i].emplace_back(true, vmwareName, ID);
 				vmwareList[ID].id = ID;
 				vmwareList[ID].myType = vmwareTypeList[vmwareName];
@@ -48,7 +48,7 @@ void DataManager::ReadAll()
 			}
 		}
 	}
-	/*fclose(stdin);*/
+	fclose(stdin);
 }
 
 /*
@@ -56,7 +56,7 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
-	for (int i = 0; i < dayCounts; i++) {
+	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
 		for (auto j = purchaseList[i].cbegin(); j != purchaseList[i].cend(); j++) {

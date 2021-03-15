@@ -151,9 +151,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CodeCraft-2021.cpp" />
     <ClCompile Include="Controller.cpp" />
     <ClCompile Include="DataManager.cpp" />
-    <ClCompile Include="HuaweiProject.cpp" />
     <ClCompile Include="Server.cpp" />
   </ItemGroup>
   <ItemGroup>
