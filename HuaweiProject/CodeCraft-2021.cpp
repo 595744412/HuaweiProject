@@ -11,4 +11,5 @@ int main()
 	Controller controller = Controller();
 	controller.CreateList();
 	dataManager.OutputAll();
+	return 0;
 }
