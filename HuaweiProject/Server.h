@@ -26,7 +26,7 @@ public:
 	//添加一台虚拟机，返回是否成功
 	bool AddVmware(unsigned int vmwareid, bool addToA);
 	//删除一台虚拟机，返回是否成功
-	bool DeleteVmware(unsigned int vmwareid);
+	void DeleteVmware(unsigned int vmwareid);
 	//获取ID
 	unsigned int GetID() { return id; }
 	//获取count

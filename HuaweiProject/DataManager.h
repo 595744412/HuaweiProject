@@ -13,6 +13,8 @@ public:
 	vector<RequestType> requestList[1000];
 	//天数
 	unsigned int dayCounts;
+	//每日购买服务器列表[天数][序号]
+	vector<string> purchaseOriginList[1000];
 	//每日购买服务器列表[天数][型号]
 	unordered_map<string, unsigned int> purchaseList[1000];
 	//每日迁移虚拟机列表[天数][迁移序号]

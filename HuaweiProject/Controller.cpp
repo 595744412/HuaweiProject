@@ -21,7 +21,7 @@ void Controller::CreateList()
 			if (request.isAdd) {
 				bool success = false;
 				for (unsigned int k = 0; k < usedServerList.size(); k++) {
-					//第k台可用虚拟机
+					//第k台可用服务器
 					Server& server = dataManager.serverList[usedServerList[k]];
 					if(server.AddVmware(request.ID, true) || server.AddVmware(request.ID, false)) {
 						success = true;
@@ -32,14 +32,18 @@ void Controller::CreateList()
 				if (!success) {
 					unordered_map<string, ServerType>::iterator iter;
 					for (iter = dataManager.serverTypeList.begin(); iter != dataManager.serverTypeList.end(); iter++) {
-						dataManager.purchaseList[i][iter->first] += 1;
-						Server& server = PurchaseServer(iter->first);
-						if (server.AddVmware(request.ID, true) || server.AddVmware(request.ID, false)) {
+						VmwareType vmware = dataManager.vmwareList[request.ID].myType;
+						if (iter->second.cores >= vmware.cores&&iter->second.memory >= vmware.memory) {
+							dataManager.purchaseOriginList[i].emplace_back(iter->first);
+							dataManager.purchaseList[i][iter->first] += 1;
+							Server& server = PurchaseServer(iter->first);
+							server.AddVmware(request.ID, true);
 							break;
 						}
 					}
 				}
-				AddData it = { dataManager.vmwareList[request.ID].serverID ,dataManager.vmwareList[request.ID].myType.isDouble, dataManager.vmwareList[request.ID].isNodeA };
+				AddData it = { dataManager.vmwareList[request.ID].serverID ,dataManager.vmwareList[request.ID].myType.isDouble,dataManager.vmwareList[request.ID].isNodeA };
+				Server server = dataManager.serverList[dataManager.vmwareList[request.ID].serverID];
 				dataManager.addList[i].emplace_back(it);
 			}
 			else {
@@ -49,5 +53,7 @@ void Controller::CreateList()
 				usedServerList.emplace_back(server.GetID());
 			}
 		}
+		//建立顺序服务器序号重映射
+
 	}
 }

@@ -5,8 +5,8 @@
 */
 void DataManager::ReadAll()
 {
-	FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);
+	/*FILE *stream;
+	freopen_s(&stream, "./training-1.txt", "r", stdin);*/
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -23,10 +23,12 @@ void DataManager::ReadAll()
 	for (int i = 0; i < num; i++) {
 		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
 		vmwareName = vmwareName.substr(1, vmwareName.size() - 2);
-		if(isDouble)
-			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores / 2, memory / 2, true);
-		else
-			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, false);
+		if (isDouble) {
+			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores/2, memory/2, isDouble == 1);
+		}
+		else {
+			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
+		}
 	}
 	//读入请求
 	int days;
@@ -51,7 +53,6 @@ void DataManager::ReadAll()
 			}
 		}
 	}
-	fclose(stdin);
 }
 
 /*
@@ -59,8 +60,6 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
-	FILE* stream;
-	freopen_s(&stream, "result.txt", "w", stdout);
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
@@ -94,15 +93,4 @@ void DataManager::OutputAll()
 			}
 		}
 	}
-	fclose(stdout);
-
-	//freopen_s(&stream, "test.txt", "w", stdout);
-	//for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
-	//	cout << i->second.name << i->second.cores << i->second.memory 
-	//		<< i->second.price << i->second.costPerDay << endl;
-	//}
-	//for (auto i = vmwareTypeList.cbegin(); i != vmwareTypeList.cend(); i++) {
-	//	cout << i->second.name << i->second.cores << i->second.memory << i->second.isDouble << endl;
-	//}
-	//fclose(stdout);
 }
