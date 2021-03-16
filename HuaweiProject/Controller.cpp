@@ -15,6 +15,7 @@ void Controller::CreateList()
 	//第一版
 	for (unsigned int i = 0; i < dataManager.dayCounts; i++) {
 		//第i天
+		unsigned int purchaseCount = 0;
 		for (unsigned int j = 0; j < dataManager.requestList[i].size(); j++) {
 			//第j个请求
 			RequestType request = dataManager.requestList[i][j];
@@ -34,7 +35,7 @@ void Controller::CreateList()
 					for (iter = dataManager.serverTypeList.begin(); iter != dataManager.serverTypeList.end(); iter++) {
 						VmwareType vmware = dataManager.vmwareList[request.ID].myType;
 						if (iter->second.cores >= vmware.cores&&iter->second.memory >= vmware.memory) {
-							dataManager.purchaseOriginList[i].emplace_back(iter->first);
+							purchaseCount++;
 							dataManager.purchaseList[i][iter->first] += 1;
 							Server& server = PurchaseServer(iter->first);
 							server.AddVmware(request.ID, true);
@@ -54,6 +55,17 @@ void Controller::CreateList()
 			}
 		}
 		//建立顺序服务器序号重映射
+		unsigned int newID = Server::GetCount() - purchaseCount;
+		unordered_map<string, unsigned int> purchaseIDList;
+		for (auto j = dataManager.purchaseList[i].cbegin(); j != dataManager.purchaseList[i].cend(); j++) {
+			purchaseIDList[j->first] = newID;
+			newID += j->second;
+		}
+		for (unsigned int j = Server::GetCount() - purchaseCount; j < Server::GetCount(); j++) {
+			string name = dataManager.serverList[j].GetServerType().name;
+			dataManager.serverIDList[j] = purchaseIDList[name];
+			purchaseIDList[name]++;
+		}
 
 	}
 }

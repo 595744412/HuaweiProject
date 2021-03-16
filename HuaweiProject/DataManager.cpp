@@ -70,26 +70,26 @@ void DataManager::OutputAll()
 		cout << "(migration, " << moveList[i].size() << ")" << endl;
 		for (auto j = moveList[i].cbegin(); j != moveList[i].cend(); j++) {
 			if (j->isDouble) {
-				cout << "(" << j->vmwareID << ", " << j->serverID << ")" << endl;
+				cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ")" << endl;
 			}
 			else {
 				if (j->isNodeA)
-					cout << "(" << j->vmwareID << ", " << j->serverID << ", A)" << endl;
+					cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", A)" << endl;
 				else
-					cout << "(" << j->vmwareID << ", " << j->serverID << ", B)" << endl;
+					cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", B)" << endl;
 			}
 		}
 		//输出创建请求
 		for (auto j = addList[i].cbegin(); j != addList[i].cend(); j++) {
 
 			if (j->isDouble) {
-				cout << "(" << j->serverID << ")" << endl;
+				cout << "(" << serverIDList[j->serverID] << ")" << endl;
 			}
 			else {
 				if (j->isNodeA)
-					cout << "(" << j->serverID << ", A)" << endl;
+					cout << "(" << serverIDList[j->serverID] << ", A)" << endl;
 				else
-					cout << "(" << j->serverID << ", B)" << endl;
+					cout << "(" << serverIDList[j->serverID] << ", B)" << endl;
 			}
 		}
 	}
