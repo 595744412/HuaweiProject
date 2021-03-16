@@ -28,7 +28,12 @@ void Controller::CreateList()
 						success = true;
 						break;
 					}
-					usedServerList.erase(usedServerList.begin() + k);
+					if (server.GetA().unusedCores < leastCore || server.GetA().unusedMemory < leastMemory) {
+						if (server.GetB().unusedCores < leastCore || server.GetB().unusedMemory < leastMemory) {
+							usedServerList.erase(usedServerList.begin() + k);
+							k--;
+						}
+					}
 				}
 				if (!success) {
 					unordered_map<string, ServerType>::iterator iter;

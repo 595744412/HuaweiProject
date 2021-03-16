@@ -9,6 +9,10 @@ private:
 	vector<unsigned int> usedServerList;
 	//购买一台服务器并添加到列表，返回服务器对象引用
 	Server& PurchaseServer(string type);
+	//核心可用阈值
+	const unsigned int leastCore = 10;
+	//内存可用阈值
+	const unsigned int leastMemory = 10;
 public:
 	//生成输出所需操作列表
 	void CreateList();
