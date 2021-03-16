@@ -66,6 +66,5 @@ void Controller::CreateList()
 			dataManager.serverIDList[j] = purchaseIDList[name];
 			purchaseIDList[name]++;
 		}
-
 	}
 }

@@ -94,3 +94,8 @@ void DataManager::OutputAll()
 		}
 	}
 }
+
+void DataManager::OutputVisual()
+{
+	//利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,总核心数,总内存数,总成本,每天成本)，每一天服务器容量变化(服务器ID,当前核心,当前内存)，可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
+}

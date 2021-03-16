@@ -29,4 +29,6 @@ public:
 	void ReadAll();
 	//输出操作
 	void OutputAll();
+	//输出可视化所需数据
+	void OutputVisual();
 };
