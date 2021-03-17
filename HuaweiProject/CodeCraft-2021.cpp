@@ -9,6 +9,10 @@ int main()
 	dataManager.ReadAll();
 	Controller controller = Controller();
 	controller.CreateList();
+#if isVisual
+	dataManager.OutputVisual();
+#else
 	dataManager.OutputAll();
+#endif
 	return 0;
 }

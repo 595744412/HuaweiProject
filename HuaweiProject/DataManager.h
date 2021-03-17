@@ -21,6 +21,10 @@ public:
 	vector<MoveData> moveList[1000];
 	//每日部署虚拟机列表[天数][部署序号]
 	vector<AddData> addList[1000];
+	//每日服务器新增列表[天数][新增序号]
+	vector<Server> newList[1000];
+	//每日服务器变化列表[天数][变化序号]
+	vector<Server> changeList[1000];
 	//虚拟机map
 	unordered_map<unsigned int, Vmware> vmwareList;
 	//服务器列表

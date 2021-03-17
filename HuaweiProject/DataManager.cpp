@@ -1,12 +1,15 @@
 #include "DataManager.h"
+#include "Server.h"
 /*
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
 */
 void DataManager::ReadAll()
 {
-	/*FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);*/
+#if isVisual
+	FILE *stream;
+	freopen_s(&stream, "./training-1.txt", "r", stdin);
+#endif
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -98,4 +101,26 @@ void DataManager::OutputAll()
 void DataManager::OutputVisual()
 {
 	//利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，每一天服务器容量变化(服务器ID,A节点当前核心,A节点当前内存,B节点当前核心,B节点当前内存)，可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
+#if isVisual
+	FILE* stream;
+	freopen_s(&stream, "output.txt", "w", stdout);
+	cout << dayCounts << endl;
+	for (unsigned int i = 0; i < dayCounts; i++) {
+		//输出新增服务器
+		cout << newList[i].size() << endl;
+		for (unsigned int j = 0; j < newList[i].size(); j++) {
+			ServerType it = newList[i][j].GetServerType();
+			unsigned int serverID = newList[i][j].GetID();
+			cout << "(" << serverID << "," << it.name << "," << it.cores << "," << it.memory << "," << it.price << "," << it.costPerDay << ")" << endl;
+		}
+		//输出服务器变化
+		cout << changeList[i].size() << endl;
+		for (unsigned int j = 0; j < changeList[i].size(); j++) {
+			Server it = changeList[i][j];
+			unsigned int serverID = changeList[i][j].GetID();
+			cout << "(" << serverID << "," << it.GetA().usedCores << "," << it.GetA().usedMemory << "," << it.GetB().usedCores << "," << it.GetB().usedMemory << ")" << endl;
+		}
+	}
+	fclose(stdout);
+#endif
 }

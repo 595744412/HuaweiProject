@@ -3,12 +3,16 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#define isVisual false
 using namespace std;
 
 class DataManager;
 class Server;
 class Controller;
 extern DataManager dataManager;
+
+//每日能耗成本系数
+const unsigned int valueCoeff = 1000;
 
 //服务器类型
 struct ServerType
@@ -23,8 +27,15 @@ struct ServerType
 	unsigned int price;
 	//每日能耗成本
 	unsigned int costPerDay;
-	ServerType(string _name = " ", unsigned int _cores = 0, unsigned int _memory = 0, unsigned int _price = 0, unsigned int _costPerDay = 0) :
-		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {}
+	//平均成本
+	float cost;
+	//CPU/内存比
+	float ratio;
+	ServerType(string _name = " ", unsigned int _cores = 1, unsigned int _memory = 1, unsigned int _price = 1, unsigned int _costPerDay = 1) :
+		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {
+		cost = (float)(_price + _costPerDay * valueCoeff) / (_cores + _memory);
+		ratio = (float)_cores / _memory;
+	}
 };
 
 //虚拟机类型
@@ -38,8 +49,12 @@ struct VmwareType
 	unsigned int memory;
 	//是否双节点部署
 	bool isDouble;
+	//CPU/内存比
+	float ratio;
 	VmwareType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, bool _isDouble=true):
-		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {}
+		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {
+		ratio = (float)_cores / _memory;
+	}
 };
 
 //请求类型
