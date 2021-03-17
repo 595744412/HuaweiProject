@@ -4,6 +4,7 @@
 #include "Controller.h"
 
 DataManager dataManager;
+
 int main()
 {
 	dataManager.ReadAll();

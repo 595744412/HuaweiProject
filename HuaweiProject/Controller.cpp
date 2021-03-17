@@ -1,6 +1,12 @@
 #include "Controller.h"
 #include "DataManager.h"
 #include "Server.h"
+float ServerType::maxratio = 1;
+float ServerType::minratio = 1;
+float VmwareType::maxratio = 1;
+float VmwareType::minratio = 1;
+//ºË´æ±ÈÈßÓà±ÈÀý
+#define RATIO 0.1
 
 Server& Controller::PurchaseServer(string type)
 {
@@ -42,14 +48,21 @@ void Controller::Init()
 		unsigned int cores = j->second.cores, memory = j->second.memory;
 		if (ratio > 1) {
 			int i = ratioServerList.size() - 1;
-			while (ratioServerList[i].ratio > ratio || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
+			while ((ratioServerList[i].ratio > 1 && (1 + RATIO) * ratioServerList[i].ratio * VmwareType::maxratio / ServerType::maxratio > ratio) || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
 				i--;
 			}
 			vmwareToServer[j->first] = ratioServerList[i].name;
 		}
+		else if (ratio < 1) {
+			int i = 0;
+			while ((ratioServerList[i].ratio <= 1 && (1 - RATIO) * ratioServerList[i].ratio * VmwareType::minratio / ServerType::maxratio < ratio) || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
+				i++;
+			}
+			vmwareToServer[j->first] = ratioServerList[i].name;
+		} 
 		else {
 			int i = 0;
-			while (ratioServerList[i].ratio < ratio || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
+			while ((ratioServerList[i].ratio == 1 && (1 - RATIO) * ratioServerList[i].ratio * VmwareType::minratio / ServerType::maxratio < ratio) || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
 				i++;
 			}
 			vmwareToServer[j->first] = ratioServerList[i].name;

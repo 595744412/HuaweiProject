@@ -31,12 +31,23 @@ struct ServerType
 	float cost;
 	//CPU/内存比
 	float ratio;
+	//最大核存比
+	static float maxratio;
+	//最小核存比
+	static float minratio;
 	ServerType(string _name = " ", unsigned int _cores = 1, unsigned int _memory = 1, unsigned int _price = 1, unsigned int _costPerDay = 1) :
 		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {
 		cost = (float)(_price + _costPerDay * valueCoeff) / (_cores + _memory);
 		ratio = (float)_cores / _memory;
+		if (ratio > maxratio) {
+			maxratio = ratio;
+		}
+		else if (ratio < minratio) {
+			minratio = ratio;
+		}
 	}
 };
+
 
 //虚拟机类型
 struct VmwareType
@@ -51,11 +62,22 @@ struct VmwareType
 	bool isDouble;
 	//CPU/内存比
 	float ratio;
+	//最大核存比
+	static float maxratio;
+	//最小核存比
+	static float minratio;
 	VmwareType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, bool _isDouble=true):
 		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {
 		ratio = (float)_cores / _memory;
+		if (ratio > maxratio) {
+			maxratio = ratio;
+		}
+		else if (ratio < minratio) {
+			minratio = ratio;
+		}
 	}
 };
+
 
 //请求类型
 struct RequestType
