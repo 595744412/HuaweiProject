@@ -42,17 +42,17 @@ void Controller::Init()
 		unsigned int cores = j->second.cores, memory = j->second.memory;
 		if (ratio > 1) {
 			int i = ratioServerList.size() - 1;
-			while (ratioServerList[i].ratio > ratio && ratioServerList[i].cores>= cores && ratioServerList[i].memory >= memory) {
+			while (ratioServerList[i].ratio > ratio || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
 				i--;
-				vmwareToServer[j->first] = ratioServerList[i].name;
 			}
+			vmwareToServer[j->first] = ratioServerList[i].name;
 		}
 		else {
 			int i = 0;
-			while (ratioServerList[i].ratio < ratio && ratioServerList[i].cores >= cores && ratioServerList[i].memory >= memory) {
+			while (ratioServerList[i].ratio < ratio || ratioServerList[i].cores < cores || ratioServerList[i].memory < memory) {
 				i++;
-				vmwareToServer[j->first] = ratioServerList[i].name;
 			}
+			vmwareToServer[j->first] = ratioServerList[i].name;
 		}
 	}
 }
@@ -80,8 +80,8 @@ void Controller::CreateList()
 						success = true;
 						break;
 					}
-					if (server.GetA().unusedCores < leastCore || server.GetA().unusedMemory < leastMemory) {
-						if (server.GetB().unusedCores < leastCore || server.GetB().unusedMemory < leastMemory) {
+					if (server.GetA().unusedCores <= leastCore || server.GetA().unusedMemory <= leastMemory) {
+						if (server.GetB().unusedCores <= leastCore || server.GetB().unusedMemory <= leastMemory) {
 							usedServerList.erase(usedServerList.begin() + k);
 							k--;
 						}
