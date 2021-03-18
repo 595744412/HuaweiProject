@@ -73,13 +73,59 @@ Server& Controller::PurchaseServer(string type)
 //		}
 //	}
 //}
-
-
-
-void Controller::CreateList()
+void Controller::init(void)
 {
 	//获取性价比列表
 	dataManager.sortPfm(dataManager.dayCounts);
+	for (auto i = dataManager.vmwareTypeList.cbegin(); i != dataManager.vmwareTypeList.cend(); i++) {
+		string serName;
+		bool flag = false; //是否按照要求找到了一个服务器
+		if (i->second.cores > i->second.memory) {
+			float target = float(i->second.cores) / float(i->second.memory);
+			target = target > dataManager.maxRatioS ? dataManager.maxRatioS : target;
+			for (auto iter = dataManager.pfmList.begin(); iter != dataManager.pfmList.end(); iter++) {
+				float temp = float(dataManager.serverTypeList[*iter].cores) / float(dataManager.serverTypeList[*iter].memory);
+				//根据CPU和memory之比选择服务器
+				if ((target <= temp + 1.5) && (target >= temp - 1.5)
+					&& (dataManager.serverTypeList[*iter].cores >= i->second.cores)
+					&& (dataManager.serverTypeList[*iter].memory >= i->second.memory)) {
+					serName = *iter;
+					flag = true;
+					break;
+				}
+			}
+		}
+		else {
+			float target = float(i->second.memory) / float(i->second.cores);
+			target = target > (1 / dataManager.maxRatioS) ? (1 / dataManager.maxRatioS) : target;
+			for (auto iter = dataManager.pfmList.begin(); iter != dataManager.pfmList.end(); iter++) {
+				float temp = float(dataManager.serverTypeList[*iter].memory) / float(dataManager.serverTypeList[*iter].cores);
+				//根据memory和CPU之比选择服务器
+				if ((target <= temp + 1.5) && (target >= temp - 1.5)
+					&& (dataManager.serverTypeList[*iter].cores >= i->second.cores)
+					&& (dataManager.serverTypeList[*iter].memory >= i->second.memory)) {
+					serName = *iter;
+					flag = true;
+					break;
+				}
+			}
+		}
+		if (!flag) {
+			for (auto iter = dataManager.serverTypeList.begin(); iter != dataManager.serverTypeList.end(); iter++) {
+				if ((iter->second.cores >= i->second.cores) && (iter->second.memory >= i->second.memory)) {
+					serName = iter->first;
+					break;
+				}
+			}
+		}
+		vmwareToServer[i->first] = serName;
+	}
+
+}
+
+void Controller::CreateList()
+{
+	init();
 	//try1.0版本
 	for (unsigned int i = 0; i < dataManager.dayCounts; i++) {
 		//第i天
@@ -90,12 +136,17 @@ void Controller::CreateList()
 			RequestType request = dataManager.requestList[i][j];
 			if (request.isAdd) {
 				bool success = false;
+				string targetName = vmwareToServer[dataManager.vmwareList[request.ID].myType.name];
 				for (unsigned int k = 0; k < usedServerList.size(); k++) {
 					//第k台可用服务器
 					Server& server = dataManager.serverList[usedServerList[k]];
-					if (server.AddVmware(request.ID, true) || server.AddVmware(request.ID, false)) {
-						success = true;
-						break;
+					if (server.GetServerType().name != targetName)
+						continue;
+					else {
+						if (server.AddVmware(request.ID, true) || server.AddVmware(request.ID, false)) {
+							success = true;
+							break;
+						}
 					}
 					if (server.GetA().unusedCores < leastCore || server.GetA().unusedMemory < leastMemory) {
 						if (server.GetB().unusedCores < leastCore || server.GetB().unusedMemory < leastMemory) {
@@ -105,55 +156,12 @@ void Controller::CreateList()
 					}
 				}
 				if (!success) {
-					VmwareType vmware = dataManager.vmwareList[request.ID].myType;
-					string serName;
-					int serverID = 0;
-					bool flag = false; //是否按照要求找到了一个服务器
-					if (vmware.cores > vmware.memory) {
-						double target = vmware.cores / vmware.memory;
-						for (auto iter = dataManager.pfmList.begin(); iter != dataManager.pfmList.end(); iter++) {
-							double temp = dataManager.serverTypeList[*iter].cores / dataManager.serverTypeList[*iter].memory;
-							//根据CPU和memory之比选择服务器
-							if ((target <= temp + 1.5)&&(target >= temp - 1.5)
-								&&(dataManager.serverTypeList[*iter].cores >= vmware.cores)
-								&&(dataManager.serverTypeList[*iter].memory >= vmware.memory)){
-								serName = *iter;
-								flag = true;
-								break;
-							}
-						}
-
-					}
-					else {
-						double target = vmware.memory / vmware.cores;
-						for (auto iter = dataManager.pfmList.begin(); iter != dataManager.pfmList.end(); iter++) {
-							double temp = dataManager.serverTypeList[*iter].memory / dataManager.serverTypeList[*iter].cores;
-							//根据memory和CPU之比选择服务器
-							if ((target <= temp + 1.5) && (target >= temp - 1.5)
-								&& (dataManager.serverTypeList[*iter].cores >= vmware.cores)
-								&& (dataManager.serverTypeList[*iter].memory >= vmware.memory)) {
-								serName = *iter;
-								flag = true;
-								break;
-							}
-						}
-					}
-					if (!flag) {
-						for (auto iter = dataManager.serverTypeList.begin(); iter != dataManager.serverTypeList.end(); iter++) {
-							//根据memory和CPU之比选择服务器
-							if ((iter->second.cores >= vmware.cores)&&(iter->second.memory >= vmware.memory)) {
-								serName = iter->first;
-								break;
-							}
-						}
-					}
+					string serName = vmwareToServer[dataManager.vmwareList[request.ID].myType.name];
 					purchaseCount++;
 					dataManager.purchaseList[i][serName] += 1;
 					Server& server = PurchaseServer(serName);
-					serverID = server.GetID();
 					server.AddVmware(request.ID, true);
-					usedServerList.emplace_back(serverID);
-					
+					usedServerList.emplace_back(server.GetID());					
 				}
 				AddData it = { dataManager.vmwareList[request.ID].serverID ,dataManager.vmwareList[request.ID].myType.isDouble,dataManager.vmwareList[request.ID].isNodeA };
 				Server server = dataManager.serverList[dataManager.vmwareList[request.ID].serverID];

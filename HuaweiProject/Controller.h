@@ -18,9 +18,7 @@ private:
 	const unsigned int leastMemory = 10;
 	//虚拟机型号对应购买服务器型号的映射
 	unordered_map<string, string> vmwareToServer;
-
-	//数据初始化处理
-	void Init();
+	void init(void);
 public:
 	//生成输出所需操作列表
 	void CreateList();

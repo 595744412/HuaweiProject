@@ -5,6 +5,8 @@
 class DataManager
 {
 public:
+	float minRatioS = 100;
+	float maxRatioS = 0;
 	//服务器类型map
 	unordered_map<string, ServerType> serverTypeList;
 	//虚拟机类型map

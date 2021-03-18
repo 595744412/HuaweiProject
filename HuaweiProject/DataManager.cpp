@@ -17,7 +17,11 @@ void DataManager::ReadAll()
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, serverName.size() - 2);
 		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
+		float temp = float(cores) / float(memory);
+		minRatioS = temp > minRatioS ? minRatioS : temp;
+		maxRatioS = temp > maxRatioS ? temp : maxRatioS;
 	}
+	//minRatioS = float(1) / minRatioS;
 	//读入虚拟机信息
 	cin >> num;
 	for (int i = 0; i < num; i++) {
@@ -115,8 +119,9 @@ void DataManager::sortPfm(unsigned int dayCounts)
 {
 	unordered_map<string, double> Performance;
 	for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
-		Performance[i->first] = double(i->second.price + int(i->second.costPerDay) * dayCounts * 0.5)
-			/ double(int(i->second.cores) + int(i->second.memory));
+		Performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.memory);
 		pfmList.emplace_back(i->first);
 	}
 	//冒泡排序
