@@ -8,6 +8,7 @@ DataManager dataManager;
 int main()
 {
 	dataManager.ReadAll();
+	cout << "read done" << endl;
 	Controller controller = Controller();
 	controller.CreateList();
 #if isVisual

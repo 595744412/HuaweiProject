@@ -29,10 +29,14 @@ public:
 	unordered_map<unsigned int, Vmware> vmwareList;
 	//服务器列表
 	vector<Server> serverList;
+	//服务器性价比有序列表（performanceList)
+	vector<string> pfmList;
 	//读取所有数据
 	void ReadAll();
 	//输出操作
 	void OutputAll();
 	//输出可视化所需数据
 	void OutputVisual();
+	//对服务器的性价比进行排序
+	void sortPfm(unsigned int dayCounts);
 };

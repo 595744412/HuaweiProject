@@ -1,15 +1,12 @@
 #include "DataManager.h"
-#include "Server.h"
 /*
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
 */
 void DataManager::ReadAll()
 {
-#if isVisual
 	FILE *stream;
 	freopen_s(&stream, "./training-1.txt", "r", stdin);
-#endif
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -56,6 +53,7 @@ void DataManager::ReadAll()
 			}
 		}
 	}
+	fclose(stdin);
 }
 
 /*
@@ -63,6 +61,8 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
+	FILE* stream;
+	freopen_s(&stream, "./result.txt", "r", stdout);
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
@@ -96,31 +96,37 @@ void DataManager::OutputAll()
 			}
 		}
 	}
+	fclose(stdout);
 }
-
+/*
+  利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，
+  每一天服务器容量变化(服务器ID,A节点当前核心,A节点当前内存,B节点当前核心,B节点当前内存)， 
+  可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
+*/
 void DataManager::OutputVisual()
 {
-	//利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，每一天服务器容量变化(服务器ID,A节点当前核心,A节点当前内存,B节点当前核心,B节点当前内存)，可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
-#if isVisual
-	FILE* stream;
-	freopen_s(&stream, "output.txt", "w", stdout);
-	cout << dayCounts << endl;
-	for (unsigned int i = 0; i < dayCounts; i++) {
-		//输出新增服务器
-		cout << newList[i].size() << endl;
-		for (unsigned int j = 0; j < newList[i].size(); j++) {
-			ServerType it = newList[i][j].GetServerType();
-			unsigned int serverID = newList[i][j].GetID();
-			cout << "(" << serverID << "," << it.name << "," << it.cores << "," << it.memory << "," << it.price << "," << it.costPerDay << ")" << endl;
-		}
-		//输出服务器变化
-		cout << changeList[i].size() << endl;
-		for (unsigned int j = 0; j < changeList[i].size(); j++) {
-			Server it = changeList[i][j];
-			unsigned int serverID = changeList[i][j].GetID();
-			cout << "(" << serverID << "," << it.GetA().usedCores << "," << it.GetA().usedMemory << "," << it.GetB().usedCores << "," << it.GetB().usedMemory << ")" << endl;
+	
+}
+
+/*
+  对服务器的性价比进行排序，价性比计算公式：(price + costPerDay * daycounts * 0.5) / (cores + memory)
+*/
+void DataManager::sortPfm(unsigned int dayCounts)
+{
+	unordered_map<string, double> Performance;
+	for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
+		Performance[i->first] = double(i->second.price + int(i->second.costPerDay) * dayCounts * 0.5)
+			/ double(int(i->second.cores) + int(i->second.memory));
+		pfmList.emplace_back(i->first);
+	}
+	//冒泡排序
+	for (int i = 0; i < pfmList.size() - 1; i++) {
+		for (int j = 0; j < pfmList.size() - 1 - i; j++) {
+			if (Performance[pfmList[j]] > Performance[pfmList[j + 1]]) {
+				string temp = pfmList[j];
+				pfmList[j] = pfmList[j + 1];
+				pfmList[j + 1] = temp;
+			}
 		}
 	}
-	fclose(stdout);
-#endif
 }
