@@ -6,7 +6,7 @@ float ServerType::minratio = 1;
 float VmwareType::maxratio = 1;
 float VmwareType::minratio = 1;
 //核存比冗余比例
-#define RATIO 0.2
+#define RATIO 0.1
 
 Server& Controller::PurchaseServer(string type)
 {
@@ -25,7 +25,7 @@ void Controller::Init()
 			ratioServerList.emplace_back(j->second);
 		}
 		else {
-			//按升序插入
+			//按降序插入
 			int a = 0, b = ratioServerList.size();
 			while (a != b) {
 				int k = (a + b) / 2;
