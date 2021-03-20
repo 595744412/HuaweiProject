@@ -22,5 +22,7 @@ private:
 public:
 	//生成输出所需操作列表
 	void CreateList();
+	void moveFun(const unsigned vmwareID, pair<int, int>& goal, int days);
+	void process(VmwareType& type, pair<int, int>& goal, bool& move, int jumpSeq);
 };
 

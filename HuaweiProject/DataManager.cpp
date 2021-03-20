@@ -20,7 +20,7 @@ void DataManager::ReadAll()
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, serverName.size() - 2);
 		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
-		float temp = float(cores) / float(memory);
+		float temp = logf(float(cores) / float(memory));
 		minRatioS = temp > minRatioS ? minRatioS : temp;
 		maxRatioS = temp > maxRatioS ? temp : maxRatioS;
 		serverTypeList[serverName].ratio = float(cores) / float(memory);
@@ -115,7 +115,7 @@ void DataManager::OutputVisual()
 {
 #if isVisual
 	FILE* stream;
-	freopen_s(&stream, "output.txt", "w", stdout);
+	freopen_s(&stream, "E:/Programming/huawei/output.txt", "w", stdout);
 	cout << dayCounts << endl;
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出新增服务器
@@ -141,11 +141,13 @@ void DataManager::OutputVisual()
 */
 void DataManager::init(unsigned int dayCounts)
 {	
+	//虚拟机存量归零
+	vmSize = 0;
 	//获取性价比
 	for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
 		performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
 			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
-			/ double(i->second.memory);
+			/ double(i->second.memory) + 40 * max(i->second.cores / i->second.memory, i->second.memory / i->second.cores);
 		pfmList.emplace_back(i->first);
 		ratioList.emplace_back(i->first);
 	}

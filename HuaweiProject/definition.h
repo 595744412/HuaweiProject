@@ -3,6 +3,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <cmath>
+#include<algorithm>
 #define isVisual true
 using namespace std;
 
