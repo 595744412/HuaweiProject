@@ -1,15 +1,15 @@
 #include "DataManager.h"
 #include "Server.h"
+
+
 /*
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
 */
 void DataManager::ReadAll()
 {
-#if isVisual
 	FILE *stream;
 	freopen_s(&stream, "./training-1.txt", "r", stdin);
-#endif
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -20,6 +20,10 @@ void DataManager::ReadAll()
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, serverName.size() - 2);
 		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
+		float temp = float(cores) / float(memory);
+		minRatioS = temp > minRatioS ? minRatioS : temp;
+		maxRatioS = temp > maxRatioS ? temp : maxRatioS;
+		serverTypeList[serverName].ratio = float(cores) / float(memory);
 	}
 	//读入虚拟机信息
 	cin >> num;
@@ -32,6 +36,7 @@ void DataManager::ReadAll()
 		else {
 			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
 		}
+		vmwareTypeList[vmwareName].ratio = float(cores) / float(memory);
 	}
 	//读入请求
 	int days;
@@ -56,6 +61,7 @@ void DataManager::ReadAll()
 			}
 		}
 	}
+	fclose(stdin);
 }
 
 /*
@@ -63,6 +69,8 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
+	FILE* stream;
+	freopen_s(&stream, "./result.txt", "w", stdout);
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
@@ -96,11 +104,15 @@ void DataManager::OutputAll()
 			}
 		}
 	}
+	fclose(stdout);
 }
-
+/*
+  利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，
+  每一天服务器容量变化(服务器ID,A节点当前核心,A节点当前内存,B节点当前核心,B节点当前内存)，
+  可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
+*/
 void DataManager::OutputVisual()
 {
-	//利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，每一天服务器容量变化(服务器ID,A节点当前核心,A节点当前内存,B节点当前核心,B节点当前内存)，可以以每一步moveList和requestList为单位输出变化信息（每当有一个服务器发生迁移、删除、添加等操作时需要有一条变化信息）
 #if isVisual
 	FILE* stream;
 	freopen_s(&stream, "output.txt", "w", stdout);
@@ -122,5 +134,40 @@ void DataManager::OutputVisual()
 		}
 	}
 	fclose(stdout);
-#endif
+#endif 
+}
+
+/*
+  对服务器的性价比、ratio进行排序，价性比计算公式：(price + costPerDay * daycounts * 0.8) * (1 / cores + 1 / memory)
+*/
+void DataManager::init(unsigned int dayCounts)
+{	
+	//获取性价比
+	for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
+		performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.memory);
+		pfmList.emplace_back(i->first);
+		ratioList.emplace_back(i->first);
+	}
+	//冒泡排序，得到性价比递减的列表
+	for (int i = 0; i < pfmList.size() - 1; i++) {
+		for (int j = 0; j < pfmList.size() - 1 - i; j++) {
+			if (performance[pfmList[j]] > performance[pfmList[j + 1]]) {
+				string temp = pfmList[j];
+				pfmList[j] = pfmList[j + 1];
+				pfmList[j + 1] = temp;
+			}
+		}
+	}
+	//冒泡排序，得到ratio递增的服务器列表
+	for (int i = 0; i < pfmList.size() - 1; i++) {
+		for (int j = 0; j < pfmList.size() - 1 - i; j++) {
+			if (serverTypeList[pfmList[j]].ratio > serverTypeList[pfmList[j + 1]].ratio) {
+				string temp = pfmList[j];
+				pfmList[j] = pfmList[j + 1];
+				pfmList[j + 1] = temp;
+			}
+		}
+	}
 }

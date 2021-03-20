@@ -24,7 +24,9 @@ public:
 	//构造函数
 	Server(ServerType serverType);
 	//添加一台虚拟机，返回是否成功
-	bool AddVmware(unsigned int vmwareid, bool addToA);
+	bool AddVmwareA(unsigned int vmwareid);
+	bool AddVmwareB(unsigned int vmwareid);
+	bool AddVmwareD(unsigned int vmwareid);
 	//删除一台虚拟机，返回是否成功
 	void DeleteVmware(unsigned int vmwareid);
 	//获取ID
@@ -32,11 +34,11 @@ public:
 	//获取count
 	static unsigned int GetCount() { return count; }
 	//获取A核信息
-	NodeData GetA() { return nodeA; }
+	NodeData& GetA() { return nodeA; }
 	//获取B核信息
-	NodeData GetB() { return nodeB; }
+	NodeData& GetB() { return nodeB; }
 	//获取服务器类型
-	ServerType GetServerType() { return myType; }
+	ServerType& GetServerType() { return myType; }
 
 };
 

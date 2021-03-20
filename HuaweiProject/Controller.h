@@ -13,14 +13,12 @@ private:
 	//购买一台服务器并添加到列表，返回服务器对象引用
 	Server& PurchaseServer(string type);
 	//核心可用阈值
-	const unsigned int leastCore = 10;
+	const unsigned int leastCore = 5;
 	//内存可用阈值
-	const unsigned int leastMemory = 10;
+	const unsigned int leastMemory = 5;
 	//虚拟机型号对应购买服务器型号的映射
 	unordered_map<string, string> vmwareToServer;
-
-	//数据初始化处理
-	void Init();
+	void init(void);
 public:
 	//生成输出所需操作列表
 	void CreateList();

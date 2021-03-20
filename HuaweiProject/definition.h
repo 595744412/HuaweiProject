@@ -35,17 +35,19 @@ struct ServerType
 	static float maxratio;
 	//最小核存比
 	static float minratio;
+	//ServerType(string _name = " ", unsigned int _cores = 1, unsigned int _memory = 1, unsigned int _price = 1, unsigned int _costPerDay = 1) :
+	//	name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {
+	//	cost = (float)(_price + _costPerDay * valueCoeff) / (_cores + _memory);
+	//	ratio = (float)_cores / _memory;
+	//	if (ratio > maxratio) {
+	//		maxratio = ratio;
+	//	}
+	//	else if (ratio < minratio) {
+	//		minratio = ratio;
+	//	}
+	//}
 	ServerType(string _name = " ", unsigned int _cores = 1, unsigned int _memory = 1, unsigned int _price = 1, unsigned int _costPerDay = 1) :
-		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {
-		cost = (float)(_price + _costPerDay * valueCoeff) / (_cores + _memory);
-		ratio = (float)_cores / _memory;
-		if (ratio > maxratio) {
-			maxratio = ratio;
-		}
-		else if (ratio < minratio) {
-			minratio = ratio;
-		}
-	}
+		name(_name), cores(_cores), memory(_memory), price(_price), costPerDay(_costPerDay) {}
 };
 
 
@@ -66,16 +68,18 @@ struct VmwareType
 	static float maxratio;
 	//最小核存比
 	static float minratio;
-	VmwareType(string _name=" ", unsigned int _cores=0, unsigned int _memory=0, bool _isDouble=true):
-		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {
-		ratio = (float)_cores / _memory;
-		if (ratio > maxratio) {
-			maxratio = ratio;
-		}
-		else if (ratio < minratio) {
-			minratio = ratio;
-		}
-	}
+	//VmwareType(string _name = " ", unsigned int _cores = 0, unsigned int _memory = 0, bool _isDouble = true) :
+	//	name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {
+	//	ratio = (float)_cores / _memory;
+	//	if (ratio > maxratio) {
+	//		maxratio = ratio;
+	//	}
+	//	else if (ratio < minratio) {
+	//		minratio = ratio;
+	//	}
+	//}
+	VmwareType(string _name = " ", unsigned int _cores = 0, unsigned int _memory = 0, bool _isDouble = true) :
+		name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {}
 };
 
 
@@ -88,7 +92,7 @@ struct RequestType
 	string name;
 	//虚拟机ID
 	unsigned int ID;
-	RequestType(bool _isAdd=true, string _name=" ", unsigned int _ID=0) :
+	RequestType(bool _isAdd = true, string _name = " ", unsigned int _ID = 0) :
 		isAdd(_isAdd), name(_name), ID(_ID) {}
 };
 

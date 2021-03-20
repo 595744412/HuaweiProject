@@ -6,17 +6,13 @@ unsigned int Server::count = 0;
 void Server::AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node)
 {
 	node.unusedCores -= cores;
-	node.usedCores += cores;
 	node.unusedMemory -= memory;
-	node.usedMemory += memory;
 }
 
 void Server::DeleteIntoNode(unsigned int cores, unsigned int memory, NodeData& node)
 {
 	node.unusedCores += cores;
-	node.usedCores -= cores;
 	node.unusedMemory += memory;
-	node.usedMemory -= memory;
 }
 
 
@@ -27,40 +23,67 @@ Server::Server(ServerType serverType):myType(serverType)
 	nodeB = { 0,myType.cores,0,myType.memory };
 }
 
-bool Server::AddVmware(unsigned int vmwareid, bool addToA = true)
+bool Server::AddVmwareA(unsigned int vmwareid)
 {
-	Vmware& myvmware = dataManager.vmwareList[vmwareid];
-	VmwareType vmware = myvmware.myType;
-	if (vmware.isDouble) {
-		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory&&nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
-			AddIntoNode(vmware.cores, vmware.memory, nodeA);
-			AddIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeA.vmwares[vmwareid] = myvmware;
-			nodeB.vmwares[vmwareid] = myvmware;
-			myvmware.serverID = id;
-			return true;
-		}
-	}
-	else if(addToA){
-		if (nodeA.unusedCores >= vmware.cores&&nodeA.unusedMemory >= vmware.memory) {
-			AddIntoNode(vmware.cores, vmware.memory, nodeA);
-			nodeA.vmwares[vmwareid] = myvmware;
-			myvmware.serverID = id;
-			myvmware.isNodeA = true;
-			return true;
-		}
-	}
-	else {
-		if (nodeB.unusedCores >= vmware.cores&&nodeB.unusedMemory >= vmware.memory) {
-			AddIntoNode(vmware.cores, vmware.memory, nodeB);
-			nodeB.vmwares[vmwareid] = myvmware;
-			myvmware.serverID = id;
-			myvmware.isNodeA = false;
-			return true;
-		}
-	}
-	return false;
+	Vmware& myVmware = dataManager.vmwareList[vmwareid];
+	VmwareType& type = myVmware.myType;
+	AddIntoNode(type.cores, type.memory, nodeA);
+	nodeA.vmwares[vmwareid] = myVmware;
+	myVmware.serverID = id;
+	myVmware.isNodeA = true;
+	return true;
 }
+bool Server::AddVmwareB(unsigned int vmwareid)
+{
+	Vmware& myVmware = dataManager.vmwareList[vmwareid];
+	VmwareType& type = myVmware.myType;
+	AddIntoNode(type.cores, type.memory, nodeB);
+	nodeA.vmwares[vmwareid] = myVmware;
+	myVmware.serverID = id;
+	myVmware.isNodeA = false;
+	return true;
+}
+bool Server::AddVmwareD(unsigned int vmwareid)
+{
+	Vmware& myVmware = dataManager.vmwareList[vmwareid];
+	VmwareType& type = myVmware.myType;
+	AddIntoNode(type.cores, type.memory, nodeA);
+	AddIntoNode(type.cores, type.memory, nodeB);
+	nodeA.vmwares[vmwareid] = myVmware;
+	nodeB.vmwares[vmwareid] = myVmware;
+	myVmware.serverID = id;
+	return true;
+}
+//bool Server::AddVmware(unsigned int vmwareid, int mode)
+//{
+//	Vmware& myVmware = dataManager.vmwareList[vmwareid];
+//	VmwareType type = myVmware.myType;
+//	if (mode == 0) {
+//		AddIntoNode(type.cores, type.memory, nodeA);
+//		nodeA.vmwares[vmwareid] = myVmware;
+//		myVmware.serverID = id;
+//		myVmware.isNodeA = true;
+//		return true;
+//	}
+//	else if (mode == 1) {
+//		AddIntoNode(type.cores, type.memory, nodeB);
+//		nodeA.vmwares[vmwareid] = myVmware;
+//		myVmware.serverID = id;
+//		myVmware.isNodeA = false;
+//		return true;
+//	}
+//	else if (mode == 2) {
+//		AddIntoNode(type.cores, type.memory, nodeA);
+//		AddIntoNode(type.cores, type.memory, nodeB);
+//		nodeA.vmwares[vmwareid] = myVmware;
+//		nodeB.vmwares[vmwareid] = myVmware;
+//		myVmware.serverID = id;
+//		return true;
+//	}
+//	else
+//		return false;
+//}
+
 
 void Server::DeleteVmware(unsigned int vmwareid)
 {

@@ -5,6 +5,8 @@
 class DataManager
 {
 public:
+	float minRatioS = 100;
+	float maxRatioS = 0;
 	//服务器类型map
 	unordered_map<string, ServerType> serverTypeList;
 	//虚拟机类型map
@@ -29,10 +31,18 @@ public:
 	unordered_map<unsigned int, Vmware> vmwareList;
 	//服务器列表
 	vector<Server> serverList;
+	//服务器性价比有序列表（performanceList)
+	vector<string> pfmList;
+	//性价比（越小性价比越高）
+	unordered_map<string, double> performance;
+	//按照ratio排列的向量
+	vector<string> ratioList;
 	//读取所有数据
 	void ReadAll();
 	//输出操作
 	void OutputAll();
 	//输出可视化所需数据
 	void OutputVisual();
+	//对服务器的性价比、ratio进行排序
+	void init(unsigned int dayCounts);
 };

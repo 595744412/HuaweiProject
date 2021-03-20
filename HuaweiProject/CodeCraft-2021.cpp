@@ -4,16 +4,17 @@
 #include "Controller.h"
 
 DataManager dataManager;
-
 int main()
 {
 	dataManager.ReadAll();
+	cout << "read done" << endl;
 	Controller controller = Controller();
 	controller.CreateList();
 #if isVisual
 	dataManager.OutputAll();
 	dataManager.OutputVisual();
 #else
+	cout << "output begin" << endl;
 	dataManager.OutputAll();
 #endif
 	return 0;
