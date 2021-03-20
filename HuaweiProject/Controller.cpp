@@ -13,7 +13,6 @@ Server& Controller::PurchaseServer(string type)
 void Controller::init(void)
 { 
 	dataManager.init(dataManager.dayCounts);
-
 	float thre = 1;
 	for (auto i = dataManager.vmwareTypeList.cbegin(); i != dataManager.vmwareTypeList.cend(); i++) {
 		string serName;
@@ -80,10 +79,6 @@ void Controller::CreateList()
 			if (request.isAdd) {
 				bool success = false;
 				VmwareType type = dataManager.vmwareList[request.ID].myType;
-				float target = float(type.cores) / float(type.memory);
-				float delta = 1000;
-				pair<int, int> goal = pair<int, int>(-1, -1);
-
 				for (unsigned int k = 0; k < usedServerList.size(); k++) {
 					//第k台可用服务器
 					Server& server = dataManager.serverList[usedServerList[k]];
@@ -108,7 +103,12 @@ void Controller::CreateList()
 					if (success) {
 						//添加服务器变化到列表
 #if isVisual
-						dataManager.changeList[i].emplace_back(server);
+						unsigned coresA = server.GetServerType().cores - server.GetA().unusedCores;
+						unsigned memoryA = server.GetServerType().memory - server.GetA().unusedMemory;
+						unsigned coresB = server.GetServerType().cores - server.GetB().unusedCores;
+						unsigned memoryB = server.GetServerType().memory - server.GetB().unusedMemory;
+						ChangeData temp1 = { server.GetID(), coresA,memoryA,coresB,memoryB };
+						dataManager.changeList[i].emplace_back(temp1);
 #endif
 						if ((server.GetA().unusedCores < leastCore || server.GetA().unusedMemory < leastMemory)
 							&& (server.GetB().unusedCores < leastCore || server.GetB().unusedMemory < leastMemory))
@@ -142,7 +142,12 @@ void Controller::CreateList()
 				server.DeleteVmware(request.ID);
 				//添加服务器变化到列表
 #if isVisual
-				dataManager.changeList[i].emplace_back(server);
+				unsigned coresA = server.GetServerType().cores - server.GetA().unusedCores;
+				unsigned memoryA = server.GetServerType().memory - server.GetA().unusedMemory;
+				unsigned coresB = server.GetServerType().cores - server.GetB().unusedCores;
+				unsigned memoryB = server.GetServerType().memory - server.GetB().unusedMemory;
+				ChangeData temp1 = { server.GetID(), coresA,memoryA,coresB,memoryB };
+				dataManager.changeList[i].emplace_back(temp1);
 #endif
 				usedServerList.emplace_back(server.GetID());
 			}
@@ -161,4 +166,3 @@ void Controller::CreateList()
 		}
 	}
 }
-

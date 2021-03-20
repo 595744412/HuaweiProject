@@ -128,9 +128,8 @@ void DataManager::OutputVisual()
 		//输出服务器变化
 		cout << changeList[i].size() << endl;
 		for (unsigned int j = 0; j < changeList[i].size(); j++) {
-			Server it = changeList[i][j];
-			unsigned int serverID = changeList[i][j].GetID();
-			cout << "(" << serverID << "," << it.GetA().usedCores << "," << it.GetA().usedMemory << "," << it.GetB().usedCores << "," << it.GetB().usedMemory << ")" << endl;
+			ChangeData it = changeList[i][j];
+			cout << "(" << it.serverID << "," << it.coresA << "," << it.memoryA << "," << it.coresB << "," << it.memoryB << ")" << endl;
 		}
 	}
 	fclose(stdout);

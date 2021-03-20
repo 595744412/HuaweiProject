@@ -26,7 +26,7 @@ public:
 	//每日服务器新增列表[天数][新增序号]
 	vector<Server> newList[1000];
 	//每日服务器变化列表[天数][变化序号]
-	vector<Server> changeList[1000];
+	vector<ChangeData> changeList[1000];
 	//虚拟机map
 	unordered_map<unsigned int, Vmware> vmwareList;
 	//服务器列表

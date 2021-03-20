@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#define isVisual false
+#define isVisual true
 using namespace std;
 
 class DataManager;
@@ -146,4 +146,17 @@ struct AddData
 	bool isDouble;
 	//是否部署节点A（否部署节点B）
 	bool isNodeA;
+};
+
+//记录服务器变化信息
+struct ChangeData
+{
+	//服务器id
+	unsigned int serverID;
+	//A节点信息
+	unsigned coresA;
+	unsigned memoryA;
+	//B节点信息
+	unsigned coresB;
+	unsigned memoryB;
 };
