@@ -13,9 +13,11 @@ private:
 	//购买一台服务器并添加到列表，返回服务器对象引用
 	Server& PurchaseServer(string type);
 	//核心可用阈值
-	const unsigned int leastCore = 5;
+	const unsigned int leastCore = 2;
 	//内存可用阈值
-	const unsigned int leastMemory = 5;
+	const unsigned int leastMemory = 2;
+	//删除虚拟机后是否清空的最大内存和CPU
+	const unsigned thre = 190;
 	//虚拟机型号对应购买服务器型号的映射
 	unordered_map<string, string> vmwareToServer;
 	vector<unsigned> waitMoveS; //储存需要迁移的服务器列表

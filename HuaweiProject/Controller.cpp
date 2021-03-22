@@ -16,7 +16,7 @@ void Controller::init(void)
 	dataManager.init(dataManager.dayCounts);
 	for (auto i = dataManager.vmwareTypeList.cbegin(); i != dataManager.vmwareTypeList.cend(); i++) {
 		float ratio = i->second.ratio;
-		int mid = 0, inter = 3;
+		int mid = 0, inter = 9;
 		string target = " ";
 		while (mid < dataManager.ratioList.size()) {
 			if (dataManager.serverTypeList[dataManager.ratioList[mid]].cores >= i->second.cores &&
@@ -191,15 +191,15 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 				if (mDelta < delta) {
 					delta = mDelta;
 					goal = pair<int, int>(*iter, 2);
-					surCoresA = surCoresA ? surCoresA : 1;
-					surMemoryA = surMemoryA ? surMemoryA : 1;
-					surCoresB = surCoresB ? surCoresB : 1;
-					surMemoryB = surMemoryB ? surMemoryB : 1;
-					/*if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20) ||
-						fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
-						move = true;
-					else
-						move = false;*/
+					// surCoresA = surCoresA ? surCoresA : 1;
+					// surMemoryA = surMemoryA ? surMemoryA : 1;
+					// surCoresB = surCoresB ? surCoresB : 1;
+					// surMemoryB = surMemoryB ? surMemoryB : 1;
+					// if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20) ||
+					// 	fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
+					// 	move = true;
+					// else
+					// 	move = false;
 				}
 			}
 		}
@@ -213,12 +213,12 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 				if (fabs(ratioA - target) < delta) {
 					delta = fabs(ratioA - target);
 					goal = pair<int, int>(*iter, 0);
-					surCoresA = surCoresA ? surCoresA : 1;
-					surMemoryA = surMemoryA ? surMemoryA : 1;
-					/*if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20))
-						move = true;
-					else
-						move = false;*/
+					// surCoresA = surCoresA ? surCoresA : 1;
+					// surMemoryA = surMemoryA ? surMemoryA : 1;
+					// if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20))
+					// 	move = true;
+					// else
+					// 	move = false;
 				}
 			}
 			if ((surCoresB >= 0) && (surMemoryB >= 0)) {
@@ -230,65 +230,65 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 				if (fabs(ratioB - target) < delta) {
 					delta = fabs(ratioB - target);
 					goal = pair<int, int>(*iter, 1);
-					surCoresB = surCoresB ? surCoresB : 1;
-					surMemoryB = surMemoryB ? surMemoryB : 1;
-					/*if (fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
-						move = true;
-					else
-						move = false;*/
+					// surCoresB = surCoresB ? surCoresB : 1;
+					// surMemoryB = surMemoryB ? surMemoryB : 1;
+					// if (fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
+					// 	move = true;
+					// else
+					// 	move = false;
 				}
 			}
 		}
 
-		//	if (type.isDouble) {
-		//		if ((surCoresA >= 0) && (surCoresB >= 0) && (surMemoryA >= 0) && (surMemoryB >= 0)) {
-		//			surCoresA = surCoresA ? surCoresA : 1;
-		//			surMemoryA = surMemoryA ? surMemoryA : 1;
-		//			surCoresB = surCoresB ? surCoresB : 1;
-		//			surMemoryB = surMemoryB ? surMemoryB : 1;
-		//			float ratioA = logf(float(surCoresA * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryA));
-		//			float ratioB = logf(float(surCoresB * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryB));
-		//			float mDelta = fabs(ratioA) > fabs(ratioB) ? fabs(ratioA) : fabs(ratioB);
-		//			if (mDelta < delta) {
-		//				delta = mDelta;
-		//				goal = pair<int, int>(*iter, 2);
-		//				if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20) ||
-		//					fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
-		//					move = true;
-		//				else
-		//					move = false;
-		//			}
-		//		}
-		//	}
-		//	else {
-		//		if ((surCoresA >= 0) && (surMemoryA >= 0)) {
-		//			surCoresA = surCoresA ? surCoresA : 1;
-		//			surMemoryA = surMemoryA ? surMemoryA : 1;
-		//			float ratioA = logf(float(surCoresA * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryA));
-		//			if (fabs(ratioA) < delta) {
-		//				delta = fabs(ratioA);
-		//				goal = pair<int, int>(*iter, 0);
-		//				if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20))
-		//					move = true;
-		//				else
-		//					move = false;
-		//			}
-		//		}
-		//		if ((surCoresB >= 0) && (surMemoryB >= 0)) {
-		//			surCoresB = surCoresB ? surCoresB : 1;
-		//			surMemoryB = surMemoryB ? surMemoryB : 1;
-		//			float ratioB = logf(float(surCoresB * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryB));
-		//			if (fabs(ratioB) < delta) {
-		//				delta = fabs(ratioB);
-		//				goal = pair<int, int>(*iter, 1);
-		//				if (fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
-		//					move = true;
-		//				else
-		//					move = false;
-		//			}
-		//		}
-		//	}
-		//}
+		// if (type.isDouble) {
+		// 	if ((surCoresA >= 0) && (surCoresB >= 0) && (surMemoryA >= 0) && (surMemoryB >= 0)) {
+		// 		surCoresA = surCoresA ? surCoresA : 1;
+		// 		surMemoryA = surMemoryA ? surMemoryA : 1;
+		// 		surCoresB = surCoresB ? surCoresB : 1;
+		// 		surMemoryB = surMemoryB ? surMemoryB : 1;
+		// 		float ratioA = logf(float(surCoresA * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryA));
+		// 		float ratioB = logf(float(surCoresB * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryB));
+		// 		float mDelta = fabs(ratioA) > fabs(ratioB) ? fabs(ratioA) : fabs(ratioB);
+		// 		if (mDelta < delta) {
+		// 			delta = mDelta;
+		// 			goal = pair<int, int>(*iter, 2);
+		// 			// if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20) ||
+		// 			// 	fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
+		// 			// 	move = true;
+		// 			// else
+		// 			// 	move = false;
+		// 		}
+		// 	}
+		// }
+		// else {
+		// 	if ((surCoresA >= 0) && (surMemoryA >= 0)) {
+		// 		surCoresA = surCoresA ? surCoresA : 1;
+		// 		surMemoryA = surMemoryA ? surMemoryA : 1;
+		// 		float ratioA = logf(float(surCoresA * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryA));
+		// 		if (fabs(ratioA) < delta) {
+		// 			delta = fabs(ratioA);
+		// 			goal = pair<int, int>(*iter, 0);
+		// 			// if (fabs(logf(float(surCoresA) / float(surMemoryA))) > logf(20))
+		// 			// 	move = true;
+		// 			// else
+		// 			// 	move = false;
+		// 		}
+		// 	}
+		// 	if ((surCoresB >= 0) && (surMemoryB >= 0)) {
+		// 		surCoresB = surCoresB ? surCoresB : 1;
+		// 		surMemoryB = surMemoryB ? surMemoryB : 1;
+		// 		float ratioB = logf(float(surCoresB * server.GetServerType().memory) / float(server.GetServerType().cores * surMemoryB));
+		// 		if (fabs(ratioB) < delta) {
+		// 			delta = fabs(ratioB);
+		// 			goal = pair<int, int>(*iter, 1);
+		// 			// if (fabs(logf(float(surCoresB) / float(surMemoryB))) > logf(20))
+		// 			// 	move = true;
+		// 			// else
+		// 			// 	move = false;
+		// 		}
+		// 	}
+		// }
+	// }
 	}
 
 	if (emptySever != -1 && goal == pair<int, int>(-1, -1)) {
@@ -302,8 +302,6 @@ void Controller::CreateList()
 	//try1.0版本
 	for (unsigned int i = 0; i < dataManager.dayCounts; i++) {
 		//第i天
-		if(i%50==0)
-			cout << i << endl;
 		unsigned int purchaseCount = 0;
 		//进行迁移
 		int moveNum = 1;
@@ -360,29 +358,6 @@ void Controller::CreateList()
 				iter++;
 			}
 		}
-
-		//for (auto iter = waitMoveV.begin(); iter != waitMoveV.end();) {
-		//	if (moveNum > int(dataManager.vmSize * 0.005))
-		//		break;
-		//	int tempServerID = dataManager.vmwareList[*iter].serverID;
-		//	if (waitMoveS.find(tempServerID) == waitMoveS.cend()) {
-		//		waitMoveV.erase(iter++);
-		//		continue;
-		//	}
-		//	VmwareType& type = dataManager.vmwareList[*iter].myType;
-		//	pair<int, int> goal = pair<int, int>(-1, -1);
-		//	bool move = false;
-		//	//遍历所有可用服务器的列表，尝试找出一个最好的
-		//	process(type, goal, move, tempServerID);
-		//	//迁移
-		//	if (!move && goal != pair<int, int>(-1, -1)) {
-		//		moveNum++;
-		//		moveFun(*iter, goal, i);
-		//		waitMoveV.erase(iter++);
-		//	}
-		//	else
-		//		iter++;
-		//}
 		//处理每个请求
 		for (unsigned int j = 0; j < dataManager.requestList[i].size(); j++) {
 			//第j个请求
@@ -397,18 +372,14 @@ void Controller::CreateList()
 				//如果找到了一个可行的
 				if (goal != pair<int, int>(-1, -1)) {
 					Server& server = dataManager.serverList[goal.first];
-					if (server.GetServerType().name == "host3O18A")
-						int adaslk = 1;
-					if (server.GetID() == 951)
-						int dsa = 1;
 					if (goal.second == 0)
 						server.AddVmwareA(request.ID);
 					else if (goal.second == 1)
 						server.AddVmwareB(request.ID);
 					else
 						server.AddVmwareD(request.ID);
-					if ((server.GetA().usedCores > 75 || server.GetA().usedMemory > 75 ||
-						server.GetB().usedCores > 75 || server.GetB().usedMemory > 75) && !move) {
+					if ((server.GetA().usedCores > thre || server.GetA().usedMemory > thre ||
+						server.GetB().usedCores > thre || server.GetB().usedMemory > thre) && !move) {
 						//waitMoveV.erase(request.ID);
 						auto it1 = find(waitMoveS.begin(), waitMoveS.end(), goal.first);
 						if (it1 != waitMoveS.end())
@@ -435,10 +406,6 @@ void Controller::CreateList()
 					purchaseCount++;
 					dataManager.purchaseList[i][serName] += 1;
 					Server& server = PurchaseServer(serName);
-					if (server.GetID() == 951)
-						int dsa = 1;
-					if (server.GetServerType().name == "host3O18A")
-						int adaslk = 1;
 					if (type.isDouble)
 						server.AddVmwareD(request.ID);
 					else
@@ -468,8 +435,8 @@ void Controller::CreateList()
 				if (find(usedServerList.begin(), usedServerList.end(), server.GetID()) == usedServerList.end())
 					usedServerList.emplace_back(server.GetID());
 				//满足服务器的清空条件时加入待迁移列表
-				if ((server.GetA().usedCores <= 75 && server.GetA().usedMemory <= 75 &&
-					server.GetB().usedCores <= 75 && server.GetB().usedMemory <= 75)) {
+				if ((server.GetA().usedCores <= thre && server.GetA().usedMemory <= thre &&
+					server.GetB().usedCores <= thre && server.GetB().usedMemory <= thre)) {
 					if (find(waitMoveS.begin(), waitMoveS.end(), server.GetID()) == waitMoveS.end())
 						waitMoveS.emplace_back(server.GetID());
 					/*for (auto jk = server.GetA().vmwares.cbegin(); jk != server.GetA().vmwares.cend(); jk++) {
