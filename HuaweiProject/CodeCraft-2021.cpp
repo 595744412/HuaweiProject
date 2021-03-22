@@ -3,6 +3,7 @@
 #include "DataManager.h"
 #include "Controller.h"
 
+
 DataManager dataManager;
 int main()
 {
@@ -14,7 +15,6 @@ int main()
 	dataManager.OutputAll();
 	dataManager.OutputVisual();
 #else
-	cout << "output begin" << endl;
 	dataManager.OutputAll();
 #endif
 	return 0;

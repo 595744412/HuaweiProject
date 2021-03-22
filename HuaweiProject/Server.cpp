@@ -7,12 +7,21 @@ void Server::AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node
 {
 	node.unusedCores -= cores;
 	node.unusedMemory -= memory;
+	node.usedCores += cores;
+	node.usedMemory += memory;
 }
 
-void Server::DeleteIntoNode(unsigned int cores, unsigned int memory, NodeData& node)
+bool Server::DeleteIntoNode(Vmware& vmware, NodeData& node)
 {
-	node.unusedCores += cores;
-	node.unusedMemory += memory;
+	auto loca = find(node.vmwares.begin(), node.vmwares.end(), vmware.id);
+	if (loca == node.vmwares.cend())
+		return false;
+	node.unusedCores += vmware.myType.cores;
+	node.unusedMemory += vmware.myType.memory;
+	node.usedCores -= vmware.myType.cores;
+	node.usedMemory -= vmware.myType.memory;
+	node.vmwares.erase(loca);
+	return true;
 }
 
 
@@ -28,7 +37,7 @@ bool Server::AddVmwareA(unsigned int vmwareid)
 	Vmware& myVmware = dataManager.vmwareList[vmwareid];
 	VmwareType& type = myVmware.myType;
 	AddIntoNode(type.cores, type.memory, nodeA);
-	nodeA.vmwares[vmwareid] = myVmware;
+	nodeA.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
 	myVmware.isNodeA = true;
 	return true;
@@ -38,7 +47,7 @@ bool Server::AddVmwareB(unsigned int vmwareid)
 	Vmware& myVmware = dataManager.vmwareList[vmwareid];
 	VmwareType& type = myVmware.myType;
 	AddIntoNode(type.cores, type.memory, nodeB);
-	nodeA.vmwares[vmwareid] = myVmware;
+	nodeB.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
 	myVmware.isNodeA = false;
 	return true;
@@ -49,8 +58,8 @@ bool Server::AddVmwareD(unsigned int vmwareid)
 	VmwareType& type = myVmware.myType;
 	AddIntoNode(type.cores, type.memory, nodeA);
 	AddIntoNode(type.cores, type.memory, nodeB);
-	nodeA.vmwares[vmwareid] = myVmware;
-	nodeB.vmwares[vmwareid] = myVmware;
+	nodeA.vmwares.emplace_back(vmwareid);
+	nodeB.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
 	return true;
 }
@@ -85,22 +94,19 @@ bool Server::AddVmwareD(unsigned int vmwareid)
 //}
 
 
-void Server::DeleteVmware(unsigned int vmwareid)
+bool Server::DeleteVmware(unsigned int vmwareid)
 {
 	Vmware& myvmware = dataManager.vmwareList[vmwareid];
 	VmwareType vmware = myvmware.myType;
+	bool success = false;
 	if (vmware.isDouble) {
-		DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
-		DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
-		nodeA.vmwares.erase(vmwareid);
-		nodeB.vmwares.erase(vmwareid);
+		success = (DeleteIntoNode(myvmware, nodeA) && DeleteIntoNode(myvmware, nodeB));
 	}
 	else if (myvmware.isNodeA) {
-		DeleteIntoNode(vmware.cores, vmware.memory, nodeA);
-		nodeA.vmwares.erase(vmwareid);
+		success = DeleteIntoNode(myvmware, nodeA);
 	}
 	else {
-		DeleteIntoNode(vmware.cores, vmware.memory, nodeB);
-		nodeB.vmwares.erase(vmwareid);
+		success = DeleteIntoNode(myvmware, nodeB);
 	}
+	return success;
 }

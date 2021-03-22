@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include<unordered_set>
 #include <vector>
 #include <cmath>
 #include<algorithm>
@@ -123,7 +124,7 @@ struct NodeData
 	//剩余内存
 	unsigned int unusedMemory;
 	//已存放虚拟机
-	unordered_map<unsigned int, Vmware> vmwares;
+	vector<unsigned int> vmwares;
 };
 
 //迁移操作数据

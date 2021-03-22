@@ -19,7 +19,7 @@ class Server
 	//往A/B节点存放核和内存
 	void AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node);
 	//从A/B节点删除核和内存
-	void DeleteIntoNode(unsigned int cores, unsigned int memory, NodeData& node);
+	bool DeleteIntoNode(Vmware& vmware, NodeData& node);
 public:
 	//构造函数
 	Server(ServerType serverType);
@@ -28,7 +28,7 @@ public:
 	bool AddVmwareB(unsigned int vmwareid);
 	bool AddVmwareD(unsigned int vmwareid);
 	//删除一台虚拟机，返回是否成功
-	void DeleteVmware(unsigned int vmwareid);
+	bool DeleteVmware(unsigned int vmwareid);
 	//获取ID
 	unsigned int GetID() { return id; }
 	//获取count

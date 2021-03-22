@@ -23,7 +23,7 @@ void DataManager::ReadAll()
 		float temp = logf(float(cores) / float(memory));
 		minRatioS = temp > minRatioS ? minRatioS : temp;
 		maxRatioS = temp > maxRatioS ? temp : maxRatioS;
-		serverTypeList[serverName].ratio = float(cores) / float(memory);
+		serverTypeList[serverName].ratio = temp;
 	}
 	//读入虚拟机信息
 	cin >> num;
@@ -36,7 +36,7 @@ void DataManager::ReadAll()
 		else {
 			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
 		}
-		vmwareTypeList[vmwareName].ratio = float(cores) / float(memory);
+		vmwareTypeList[vmwareName].ratio = logf(float(cores) / float(memory));
 	}
 	//读入请求
 	int days;
@@ -149,6 +149,9 @@ void DataManager::init(unsigned int dayCounts)
 			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
 			/ double(i->second.memory) + 40 * max(i->second.cores / i->second.memory, i->second.memory / i->second.cores);
 		pfmList.emplace_back(i->first);
+	/*	performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+			/ double(i->second.memory);*/
 		ratioList.emplace_back(i->first);
 	}
 	//冒泡排序，得到性价比递减的列表
@@ -162,12 +165,12 @@ void DataManager::init(unsigned int dayCounts)
 		}
 	}
 	//冒泡排序，得到ratio递增的服务器列表
-	for (int i = 0; i < pfmList.size() - 1; i++) {
-		for (int j = 0; j < pfmList.size() - 1 - i; j++) {
-			if (serverTypeList[pfmList[j]].ratio > serverTypeList[pfmList[j + 1]].ratio) {
-				string temp = pfmList[j];
-				pfmList[j] = pfmList[j + 1];
-				pfmList[j + 1] = temp;
+	for (int i = 0; i < ratioList.size() - 1; i++) {
+		for (int j = 0; j < ratioList.size() - 1 - i; j++) {
+			if (serverTypeList[ratioList[j]].ratio > serverTypeList[ratioList[j + 1]].ratio) {
+				string temp = ratioList[j];
+				ratioList[j] = ratioList[j + 1];
+				ratioList[j + 1] = temp;
 			}
 		}
 	}

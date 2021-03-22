@@ -18,11 +18,13 @@ private:
 	const unsigned int leastMemory = 5;
 	//虚拟机型号对应购买服务器型号的映射
 	unordered_map<string, string> vmwareToServer;
+	vector<unsigned> waitMoveS; //储存需要迁移的服务器列表
+	vector<unsigned> waitMoveV;  //储存需要迁移的虚拟机的列表
 	void init(void);
 public:
 	//生成输出所需操作列表
 	void CreateList();
 	void moveFun(const unsigned vmwareID, pair<int, int>& goal, int days);
-	void process(VmwareType& type, pair<int, int>& goal, bool& move, int jumpSeq);
+	void process(unsigned vmwareID, pair<int, int>& goal, bool& move, int jumpSeq);
 };
 
