@@ -28,5 +28,7 @@ public:
 	void CreateList();
 	void moveFun(const unsigned vmwareID, pair<int, int>& goal, int days);
 	void process(unsigned vmwareID, pair<int, int>& goal, bool& move, int jumpSeq);
+	void update(const unsigned serverID);
+	void mySort(vector<unsigned>& list);
 };
 

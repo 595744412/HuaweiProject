@@ -21,6 +21,8 @@ class Server
 	//从A/B节点删除核和内存
 	bool DeleteIntoNode(Vmware& vmware, NodeData& node);
 public:
+	//使用的程度
+	unsigned usuage;
 	//构造函数
 	Server(ServerType serverType);
 	//添加一台虚拟机，返回是否成功
@@ -39,6 +41,8 @@ public:
 	NodeData& GetB() { return nodeB; }
 	//获取服务器类型
 	ServerType& GetServerType() { return myType; }
+	//是否为空
+	bool isEmpty();
 
 };
 

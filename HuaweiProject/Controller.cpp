@@ -10,6 +10,54 @@ Server& Controller::PurchaseServer(string type)
 	return dataManager.serverList[server.GetID()];
 }
 
+//按照usuage的升序排列
+void Controller::mySort(vector<unsigned>& list)
+{
+	for (int i = 1; i < list.size(); i++) {
+		int temp = list[i];
+		int low = 0, high = i - 1, mid = 0;
+		while (low <= high) {
+			mid = (low + high) / 2;
+			if (dataManager.serverList[usedServerList[mid]].usuage == dataManager.serverList[temp].usuage) {
+				high = mid;
+				break;
+			}
+			else if ((dataManager.serverList[usedServerList[mid]].usuage < dataManager.serverList[temp].usuage))
+				low = mid + 1;
+			else
+				high = mid - 1;
+		}
+		for (int j = i; j > high + 1; j--) {
+			list[j] = list[j - 1];
+		}
+		list[high + 1] = temp;
+	}
+}
+
+//按照待空闲度维护有序性
+void Controller::update(const unsigned serverID)
+{
+	unsigned _usuage = dataManager.serverList[serverID].usuage;
+	auto it = find(usedServerList.begin(), usedServerList.end(), serverID);
+	if (it != usedServerList.end())
+		usedServerList.erase(it);
+	//二分插入,保证按照usuage的升序排列
+	int low = 0, high = usedServerList.size(), mid = 0;
+	while (low < high) {
+		mid = (low + high) / 2;
+		if (dataManager.serverList[usedServerList[mid]].usuage == _usuage) {
+			high = mid;
+			break;
+		}
+		else if ((dataManager.serverList[usedServerList[mid]].usuage < _usuage))
+			low = mid + 1;
+		else
+			high = mid;
+	}
+	usedServerList.insert(usedServerList.begin() + high, serverID);
+}
+
+
 //初始化
 void Controller::init(void)
 {
@@ -167,7 +215,7 @@ void Controller::moveFun(const unsigned vmwareID, pair<int, int>& goal, int days
 void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, int jumpSeq = -1)
 {
 	float delta = 1000;
-	int emptySever = -1;
+	int emptyServer = -1;
 	VmwareType& type = dataManager.vmwareList[vmwareID].myType;
 	for (auto iter = usedServerList.cbegin(); iter != usedServerList.cend(); iter++) {
 		if (*iter == jumpSeq)
@@ -181,8 +229,12 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 		int surMemoryB = server.GetB().unusedMemory - type.memory;
 		if (type.isDouble) {
 			if ((surCoresA >= 0) && (surCoresB >= 0) && (surMemoryA >= 0) && (surMemoryB >= 0)) {
-				if (server.GetA().usedCores == 0 && server.GetB().usedCores == 0 && server.GetA().usedMemory == 0 && server.GetB().usedMemory == 0) {
-					emptySever = *iter;
+				if (server.isEmpty()) {
+					if (emptyServer == -1) 
+						emptyServer = *iter;
+					if (fabs(server.GetServerType().ratio - type.ratio) <
+						fabs(dataManager.serverList[emptyServer].GetServerType().ratio - type.ratio))
+						emptyServer = *iter;
 					continue;
 				}
 				float ratioA = logf(float(server.GetA().unusedCores) / float(server.GetA().unusedMemory));
@@ -205,8 +257,12 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 		}
 		else {
 			if ((surCoresA >= 0) && (surMemoryA >= 0)) {
-				if (server.GetA().usedCores == 0 && server.GetB().usedCores == 0 && server.GetA().usedMemory == 0 && server.GetB().usedMemory == 0) {
-					emptySever = *iter;
+				if (server.isEmpty()) {
+					if (emptyServer == -1)
+						emptyServer = *iter;
+					if (fabs(server.GetServerType().ratio - type.ratio) <
+						fabs(dataManager.serverList[emptyServer].GetServerType().ratio - type.ratio))
+						emptyServer = *iter;
 					continue;
 				}
 				float ratioA = logf(float(server.GetA().unusedCores) / float(server.GetA().unusedMemory));
@@ -222,8 +278,12 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 				}
 			}
 			if ((surCoresB >= 0) && (surMemoryB >= 0)) {
-				if (server.GetA().usedCores == 0 && server.GetB().usedCores == 0 && server.GetA().usedMemory == 0 && server.GetB().usedMemory == 0) {
-					emptySever = *iter;
+				if (server.isEmpty()) {
+					if (emptyServer == -1)
+						emptyServer = *iter;
+					if (fabs(server.GetServerType().ratio - type.ratio) <
+						fabs(dataManager.serverList[emptyServer].GetServerType().ratio - type.ratio))
+						emptyServer = *iter;
 					continue;
 				}
 				float ratioB = logf(float(server.GetB().unusedCores) / float(server.GetB().unusedMemory));
@@ -291,8 +351,8 @@ void Controller::process(unsigned vmwareID, pair<int, int>& goal, bool& move, in
 	// }
 	}
 
-	if (emptySever != -1 && goal == pair<int, int>(-1, -1)) {
-		goal = pair<int, int>(emptySever, (type.isDouble == 1) + 1);
+	if (emptyServer != -1 && goal == pair<int, int>(-1, -1)) {
+		goal = pair<int, int>(emptyServer, (type.isDouble == 1) + 1);
 	}
 }
 
@@ -302,18 +362,22 @@ void Controller::CreateList()
 	//try1.0版本
 	for (unsigned int i = 0; i < dataManager.dayCounts; i++) {
 		//第i天
+		if (i % 50 == 0) {
+			cout << i << endl;
+		}
 		unsigned int purchaseCount = 0;
 		//进行迁移
 		int moveNum = 1;
-		int sd = 0;
+		//mySort(waitMoveS);
 		for (auto iter = waitMoveS.begin(); iter != waitMoveS.end();) {
+			if (dataManager.serverList[*iter].isEmpty()) {
+				iter++;
+				continue;
+			}
+			if (moveNum > int(dataManager.vmSize * 0.005))
+				break;
 			bool success = true;
-			int asd = dataManager.serverList[*iter].GetA().vmwares.size();
-			int as = 0;
 			for (int jk = 0; jk < dataManager.serverList[*iter].GetA().vmwares.size(); jk++) {
-				as++;
-				if (as == 4 && i == 91)
-					int dasjk = 0;
 				if (moveNum > int(dataManager.vmSize * 0.005))
 					break;
 				pair<int, int> goal = pair<int, int>(-1, -1);

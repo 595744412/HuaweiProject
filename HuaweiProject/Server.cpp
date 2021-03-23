@@ -30,6 +30,7 @@ Server::Server(ServerType serverType):myType(serverType)
 	id = count++;
 	nodeA = { 0,myType.cores,0,myType.memory };
 	nodeB = { 0,myType.cores,0,myType.memory };
+	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 }
 
 bool Server::AddVmwareA(unsigned int vmwareid)
@@ -40,6 +41,8 @@ bool Server::AddVmwareA(unsigned int vmwareid)
 	nodeA.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
 	myVmware.isNodeA = true;
+	//更新使用程度
+	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 	return true;
 }
 bool Server::AddVmwareB(unsigned int vmwareid)
@@ -50,6 +53,8 @@ bool Server::AddVmwareB(unsigned int vmwareid)
 	nodeB.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
 	myVmware.isNodeA = false;
+	//更新使用程度
+	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 	return true;
 }
 bool Server::AddVmwareD(unsigned int vmwareid)
@@ -61,6 +66,8 @@ bool Server::AddVmwareD(unsigned int vmwareid)
 	nodeA.vmwares.emplace_back(vmwareid);
 	nodeB.vmwares.emplace_back(vmwareid);
 	myVmware.serverID = id;
+	//更新使用程度
+	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 	return true;
 }
 //bool Server::AddVmware(unsigned int vmwareid, int mode)
@@ -93,6 +100,10 @@ bool Server::AddVmwareD(unsigned int vmwareid)
 //		return false;
 //}
 
+bool Server::isEmpty()
+{
+	return nodeA.usedCores == 0 && nodeA.usedMemory == 0 && nodeB.usedCores == 0 && nodeB.usedMemory == 0;
+}
 
 bool Server::DeleteVmware(unsigned int vmwareid)
 {
@@ -108,5 +119,7 @@ bool Server::DeleteVmware(unsigned int vmwareid)
 	else {
 		success = DeleteIntoNode(myvmware, nodeB);
 	}
+	//更新使用程度
+	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 	return success;
 }
