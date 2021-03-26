@@ -1,0 +1,9 @@
+{
+  "language": "",
+  "pythonInterpreter": "",
+  "executable": "",
+  "sourceCode": "",
+  "javaPath": "",
+  "buildJARPath": "",
+  "ioData": ["./data/training-1.txt", "./data/training-2.txt"]
+}

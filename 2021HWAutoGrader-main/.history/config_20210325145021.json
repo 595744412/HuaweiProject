@@ -1,0 +1,9 @@
+{
+  "language": "c++",
+  "pythonInterpreter": "",
+  "executable": "E:/Programming/myGithub/HuaweiProject/x64/Release/HuaweiProject.exe",
+  "sourceCode": "",
+  "javaPath": "",
+  "buildJARPath": "",
+  "ioData": ["./data/training-1.txt", "./data/training-2.txt"]
+}

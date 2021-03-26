@@ -5,10 +5,11 @@
 class DataManager
 {
 public:
-	float minRatioS = 100;
-	float maxRatioS = -100;
-	//当前虚拟机存量
-	int vmSize;
+	unsigned minCores = 100;	//所有虚拟机类型中的最小CPU核数
+	unsigned minMemory = 100;   //所有虚拟机类型中的最小内存数
+	float minRatioS = 100;      //所有服务器类型中的最小核存比的自然对数
+	float maxRatioS = -100;     //所有服务器类型中的最大核存比的自然对数
+	int vmSize;	                //当前虚拟机存量
 	//服务器类型map
 	unordered_map<string, ServerType> serverTypeList;
 	//虚拟机类型map
@@ -35,9 +36,9 @@ public:
 	vector<Server> serverList;
 	//服务器性价比有序列表（performanceList)
 	vector<string> pfmList;
-	//性价比（越小性价比越高）
+	//储存服务器的性价比（越小性价比越高）
 	unordered_map<string, double> performance;
-	//按照ratio排列的向量
+	//按照核存比升序排列的服务器列表
 	vector<string> ratioList;
 	//读取所有数据
 	void ReadAll();

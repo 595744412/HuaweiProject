@@ -11,6 +11,17 @@ void Server::AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node
 	node.usedMemory += memory;
 }
 
+/************************************
+【函数功能】判断是否要清空服务器
+【函数参数】thre：判断是否清空的阈值
+**************************************/
+bool Server::needEmpty(int thre)
+{
+	
+	return nodeA.unusedCores < thre && nodeA.unusedMemory < thre &&
+		   nodeB.unusedCores < thre && nodeB.unusedMemory < thre;
+}
+
 bool Server::DeleteIntoNode(Vmware& vmware, NodeData& node)
 {
 	auto loca = find(node.vmwares.begin(), node.vmwares.end(), vmware.id);
@@ -99,7 +110,9 @@ bool Server::AddVmwareD(unsigned int vmwareid)
 //	else
 //		return false;
 //}
-
+/************************************
+【函数功能】判断服务器是否闲置
+**************************************/
 bool Server::isEmpty()
 {
 	return nodeA.usedCores == 0 && nodeA.usedMemory == 0 && nodeB.usedCores == 0 && nodeB.usedMemory == 0;
@@ -119,6 +132,7 @@ bool Server::DeleteVmware(unsigned int vmwareid)
 	else {
 		success = DeleteIntoNode(myvmware, nodeB);
 	}
+	myvmware.serverID = -1;
 	//更新使用程度
 	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
 	return success;

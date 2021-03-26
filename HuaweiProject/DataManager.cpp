@@ -8,8 +8,10 @@
 */
 void DataManager::ReadAll()
 {
+#if isVisual
 	FILE *stream;
 	freopen_s(&stream, "./training-1.txt", "r", stdin);
+#endif
 	int num;
 	string serverName, vmwareName, requestName;
 	unsigned int cores, memory, price, costPerDay, isDouble;
@@ -31,10 +33,14 @@ void DataManager::ReadAll()
 		cin >> vmwareName >> cores >> buff >> memory >> buff >> isDouble >> buff;
 		vmwareName = vmwareName.substr(1, vmwareName.size() - 2);
 		if (isDouble) {
-			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores/2, memory/2, isDouble == 1);
+			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores / 2, memory / 2, isDouble == 1);
+			minCores = (minCores > cores / 2) ? (cores / 2) : minCores;
+			minMemory = (minMemory > memory / 2) ? (memory / 2) : minMemory;
 		}
 		else {
 			vmwareTypeList[vmwareName] = VmwareType(vmwareName, cores, memory, isDouble == 1);
+			minCores = (minCores > cores) ? cores : minCores;
+			minMemory = (minMemory > memory) ? memory : minMemory;
 		}
 		vmwareTypeList[vmwareName].ratio = logf(float(cores) / float(memory));
 	}
@@ -61,7 +67,9 @@ void DataManager::ReadAll()
 			}
 		}
 	}
+#if isVisual
 	fclose(stdin);
+#endif
 }
 
 /*
@@ -69,8 +77,10 @@ void DataManager::ReadAll()
 */
 void DataManager::OutputAll()
 {
+#if isVisual
 	FILE* stream;
 	freopen_s(&stream, "./result.txt", "w", stdout);
+#endif
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出购买服务器
 		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
@@ -104,7 +114,9 @@ void DataManager::OutputAll()
 			}
 		}
 	}
+#if isVisual
 	fclose(stdout);
+#endif	
 }
 /*
   利用data信息，输出每一天新增服务器列表(服务器ID,服务器型号,单节点核心数,单节点内存数,总成本,每天成本)，
@@ -136,25 +148,29 @@ void DataManager::OutputVisual()
 #endif 
 }
 
-/*
-  对服务器的性价比、ratio进行排序，价性比计算公式：(price + costPerDay * daycounts * 0.8) * (1 / cores + 1 / memory)
-*/
+
+/********************************************************
+【函数功能】根据读取到的信息进行初始化，获取performance、pfmList和ratioList
+【函数参数】dayCounts：总天数
+【注】性价比计算公式：(price + costPerDay * daycounts * α) * (1 / cores + 1 / memory) + β * max(cores /memory，memory / cores）
+（按照这个公式计算出来的数值越小性价比越高，α和β表示可调参数）
+**********************************************************/
 void DataManager::init(unsigned int dayCounts)
 {	
 	//虚拟机存量归零
 	vmSize = 0;
 	//获取性价比
 	for (auto i = serverTypeList.cbegin(); i != serverTypeList.cend(); i++) {
+		/*	performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+				/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
+				/ double(i->second.memory);*/
 		performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
 			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
 			/ double(i->second.memory) + 40 * max(i->second.cores / i->second.memory, i->second.memory / i->second.cores);
 		pfmList.emplace_back(i->first);
-	/*	performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
-			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
-			/ double(i->second.memory);*/
 		ratioList.emplace_back(i->first);
 	}
-	//冒泡排序，得到性价比递减的列表
+	//冒泡排序，得到性价比递减的服务器列表
 	for (int i = 0; i < pfmList.size() - 1; i++) {
 		for (int j = 0; j < pfmList.size() - 1 - i; j++) {
 			if (performance[pfmList[j]] > performance[pfmList[j + 1]]) {
@@ -164,7 +180,7 @@ void DataManager::init(unsigned int dayCounts)
 			}
 		}
 	}
-	//冒泡排序，得到ratio递增的服务器列表
+	//冒泡排序，得到核存比递增的服务器列表
 	for (int i = 0; i < ratioList.size() - 1; i++) {
 		for (int j = 0; j < ratioList.size() - 1 - i; j++) {
 			if (serverTypeList[ratioList[j]].ratio > serverTypeList[ratioList[j + 1]].ratio) {

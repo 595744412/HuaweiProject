@@ -2,10 +2,11 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 #include <cmath>
 #include<algorithm>
-#define isVisual true
+#define isVisual false
 using namespace std;
 
 class DataManager;
@@ -66,10 +67,6 @@ struct VmwareType
 	bool isDouble;
 	//CPU/内存比
 	float ratio;
-	//最大核存比
-	static float maxratio;
-	//最小核存比
-	static float minratio;
 	//VmwareType(string _name = " ", unsigned int _cores = 0, unsigned int _memory = 0, bool _isDouble = true) :
 	//	name(_name), cores(_cores), memory(_memory), isDouble(_isDouble) {
 	//	ratio = (float)_cores / _memory;

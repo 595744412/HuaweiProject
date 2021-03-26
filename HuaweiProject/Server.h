@@ -21,7 +21,7 @@ class Server
 	//从A/B节点删除核和内存
 	bool DeleteIntoNode(Vmware& vmware, NodeData& node);
 public:
-	//使用的程度
+	//使用度
 	unsigned usuage;
 	//构造函数
 	Server(ServerType serverType);
@@ -43,6 +43,8 @@ public:
 	ServerType& GetServerType() { return myType; }
 	//是否为空
 	bool isEmpty();
+	//判断服务器是否清空
+	bool needEmpty(int thre);
 
 };
 
