@@ -7,14 +7,14 @@
 DataManager dataManager;
 int main()
 {
-	dataManager.ReadAll();
+	dataManager.initRead();
+#if isVisual
+	cout << "read done" << endl;
+#endif
 	Controller controller = Controller();
 	controller.CreateList();
 #if isVisual
-	dataManager.OutputAll();
 	dataManager.OutputVisual();
-#else
-	dataManager.OutputAll();
 #endif
 	return 0;
 }

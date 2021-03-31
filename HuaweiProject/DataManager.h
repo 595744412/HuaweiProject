@@ -5,19 +5,22 @@
 class DataManager
 {
 public:
-	unsigned minCores = 100;	//所有虚拟机类型中的最小CPU核数
-	unsigned minMemory = 100;   //所有虚拟机类型中的最小内存数
-	float minRatioS = 100;      //所有服务器类型中的最小核存比的自然对数
-	float maxRatioS = -100;     //所有服务器类型中的最大核存比的自然对数
-	int vmSize;	                //当前虚拟机存量
-	//服务器类型map
-	unordered_map<string, ServerType> serverTypeList;
-	//虚拟机类型map
-	unordered_map<string, VmwareType> vmwareTypeList;
-	//每日请求列表[天数][请求序号]
-	vector<RequestType> requestList[1000];
-	//天数
-	unsigned int dayCounts;
+	unsigned minCores = 100;							//所有虚拟机类型中的最小CPU核数
+	unsigned minMemory = 100;							//所有虚拟机类型中的最小内存数
+	float minRatioS = 100;								//所有服务器类型中的最小核存比的自然对数
+	float maxRatioS = -100;								//所有服务器类型中的最大核存比的自然对数
+	int vmSize;											//当前虚拟机存量
+	unsigned dayCounts;                                 //总天数
+	unsigned tempDay;									//当前读到了第几天的信息
+#if isVisual
+	FILE* outStream;									//输出流
+	FILE* inStream;										//输入流
+#endif
+
+	unordered_map<string, ServerType> serverTypeList;   //服务器类型map
+	unordered_map<string, VmwareType> vmwareTypeList;	//虚拟机类型map
+	vector<RequestType> requestList[1000];				//每日请求列表[天数][请求序号]
+
 	//每日购买服务器列表[天数][型号]
 	unordered_map<string, unsigned int> purchaseList[1000];
 	//服务器ID重映射
@@ -40,12 +43,14 @@ public:
 	unordered_map<string, double> performance;
 	//按照核存比升序排列的服务器列表
 	vector<string> ratioList;
-	//读取所有数据
-	void ReadAll();
-	//输出操作
-	void OutputAll();
+	//读取初始数据
+	void initRead();
+	//输出第i天的信息
+	void myWrite(unsigned i); 
 	//输出可视化所需数据
 	void OutputVisual();
 	//对服务器的性价比、ratio进行排序
 	void init(unsigned int dayCounts);
+	//读取一天的请求
+	void readRequests();              
 };

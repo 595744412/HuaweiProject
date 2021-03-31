@@ -1,16 +1,14 @@
 #include "DataManager.h"
 #include "Server.h"
 
-
 /*
    按顺序读取所有数据存在serverTypeList、vmwareTypeList和requestList中，
    对于ADD操作，添加对应（id，虚拟机类型引用）键值对在vmwareList中
 */
-void DataManager::ReadAll()
+void DataManager::initRead()
 {
 #if isVisual
-	FILE *stream;
-	freopen_s(&stream, "./training-1.txt", "r", stdin);
+	freopen_s(&inStream, "./training-1.txt", "r", stdin);
 #endif
 	int num;
 	string serverName, vmwareName, requestName;
@@ -21,7 +19,7 @@ void DataManager::ReadAll()
 	for (int i = 0; i < num; i++) {
 		cin >> serverName >> cores >> buff >> memory >> buff >> price >> buff >> costPerDay >> buff;
 		serverName = serverName.substr(1, serverName.size() - 2);
-		serverTypeList[serverName] = ServerType(serverName, cores/2, memory/2, price, costPerDay);
+		serverTypeList[serverName] = ServerType(serverName, cores / 2, memory / 2, price, costPerDay);
 		float temp = logf(float(cores) / float(memory));
 		minRatioS = temp > minRatioS ? minRatioS : temp;
 		maxRatioS = temp > maxRatioS ? temp : maxRatioS;
@@ -44,11 +42,13 @@ void DataManager::ReadAll()
 		}
 		vmwareTypeList[vmwareName].ratio = logf(float(cores) / float(memory));
 	}
-	//读入请求
-	int days;
-	cin >> days;
-	dayCounts = days;
-	for (int i = 0; i < days; i++) {
+	//读入初始K天的请求
+	unsigned T, K;
+	cin >> T;
+	dayCounts = T;
+	cin >> K;
+	tempDay = 0;
+	while (tempDay < K) {
 		cin >> num;
 		for (int j = 0; j < num; j++) {
 			cin >> buff >> requestName;
@@ -57,65 +57,101 @@ void DataManager::ReadAll()
 			if (requestName == "add") {
 				cin >> vmwareName >> ID >> buff;
 				vmwareName = vmwareName.substr(0, vmwareName.size() - 1);
-				requestList[i].emplace_back(true, vmwareName, ID);
+				requestList[tempDay].emplace_back(true, vmwareName, ID);
 				vmwareList[ID].id = ID;
 				vmwareList[ID].myType = vmwareTypeList[vmwareName];
 			}
 			else {
 				cin >> ID >> buff;
-				requestList[i].emplace_back(false, " ", ID);
+				requestList[tempDay].emplace_back(false, "None", ID);
 			}
 		}
+		tempDay++;
 	}
-#if isVisual
-	fclose(stdin);
-#endif
 }
+//读入每一天的请求
+void DataManager::readRequests()
+{
+	if (tempDay == dayCounts) {
+#if isVisual
+		if(inStream)
+			fclose(inStream);
+#endif
+		return;
+	}
+	int num;
+	string vmwareName, requestName;
+	char buff;
+	cin >> num;
+	for (int j = 0; j < num; j++) {
+		cin >> buff >> requestName;
+		requestName = requestName.substr(0, requestName.size() - 1);
+		unsigned int ID;
+		if (requestName == "add") {
+			cin >> vmwareName >> ID >> buff;
+			vmwareName = vmwareName.substr(0, vmwareName.size() - 1);
+			requestList[tempDay].emplace_back(true, vmwareName, ID);
+			vmwareList[ID].id = ID;
+			vmwareList[ID].myType = vmwareTypeList[vmwareName];
+		}
+		else {
+			cin >> ID >> buff;
+			requestList[tempDay].emplace_back(false, "None", ID);
+		}
+	}
+	tempDay++;
+	return;
+}
+
 
 /*
 	把purchaseList、moveList和addList按每天的顺序输出
 */
-void DataManager::OutputAll()
+void DataManager::myWrite(unsigned i)
 {
 #if isVisual
-	FILE* stream;
-	freopen_s(&stream, "./result.txt", "w", stdout);
+	if (i == 0) {
+		freopen_s(&outStream, "./result.txt", "w", stdout);
+	}
+	else {
+		freopen_s(&outStream, "./result.txt", "a+", stdout);
+	}
 #endif
-	for (unsigned int i = 0; i < dayCounts; i++) {
-		//输出购买服务器
-		cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
-		for (auto j = purchaseList[i].cbegin(); j != purchaseList[i].cend(); j++) {
-			cout << "(" + j->first + ", " << j->second << ")" << endl;
+	//输出购买服务器
+	cout << "(purchase, " << purchaseList[i].size() << ")" << endl;
+	for (auto j = purchaseList[i].cbegin(); j != purchaseList[i].cend(); j++) {
+		cout << "(" + j->first + ", " << j->second << ")" << endl;
+	}
+	//输出迁移虚拟机
+	cout << "(migration, " << moveList[i].size() << ")" << endl;
+	for (auto j = moveList[i].cbegin(); j != moveList[i].cend(); j++) {
+		if (j->isDouble) {
+			cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ")" << endl;
 		}
-		//输出迁移虚拟机
-		cout << "(migration, " << moveList[i].size() << ")" << endl;
-		for (auto j = moveList[i].cbegin(); j != moveList[i].cend(); j++) {
-			if (j->isDouble) {
-				cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ")" << endl;
-			}
-			else {
-				if (j->isNodeA)
-					cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", A)" << endl;
-				else
-					cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", B)" << endl;
-			}
+		else {
+			if (j->isNodeA)
+				cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", A)" << endl;
+			else
+				cout << "(" << j->vmwareID << ", " << serverIDList[j->serverID] << ", B)" << endl;
 		}
-		//输出创建请求
-		for (auto j = addList[i].cbegin(); j != addList[i].cend(); j++) {
+	}
+	//输出创建请求
+	for (auto j = addList[i].cbegin(); j != addList[i].cend(); j++) {
 
-			if (j->isDouble) {
-				cout << "(" << serverIDList[j->serverID] << ")" << endl;
-			}
-			else {
-				if (j->isNodeA)
-					cout << "(" << serverIDList[j->serverID] << ", A)" << endl;
-				else
-					cout << "(" << serverIDList[j->serverID] << ", B)" << endl;
-			}
+		if (j->isDouble) {
+			cout << "(" << serverIDList[j->serverID] << ")" << endl;
+		}
+		else {
+			if (j->isNodeA)
+				cout << "(" << serverIDList[j->serverID] << ", A)" << endl;
+			else
+				cout << "(" << serverIDList[j->serverID] << ", B)" << endl;
 		}
 	}
 #if isVisual
-	fclose(stdout);
+	freopen_s(&outStream, "CON", "w", stdout);
+	if (i == dayCounts && outStream != NULL)
+		fclose(outStream);
 #endif	
 }
 /*
@@ -127,7 +163,7 @@ void DataManager::OutputVisual()
 {
 #if isVisual
 	FILE* stream;
-	freopen_s(&stream, "E:/Programming/huawei/output.txt", "w", stdout);
+	freopen_s(&stream, "E:/Programming/visualize/output.txt", "w", stdout);
 	cout << dayCounts << endl;
 	for (unsigned int i = 0; i < dayCounts; i++) {
 		//输出新增服务器
@@ -144,7 +180,7 @@ void DataManager::OutputVisual()
 			cout << "(" << it.serverID << "," << it.coresA << "," << it.memoryA << "," << it.coresB << "," << it.memoryB << ")" << endl;
 		}
 	}
-	fclose(stdout);
+	fclose(stream);
 #endif 
 }
 
@@ -156,7 +192,7 @@ void DataManager::OutputVisual()
 （按照这个公式计算出来的数值越小性价比越高，α和β表示可调参数）
 **********************************************************/
 void DataManager::init(unsigned int dayCounts)
-{	
+{
 	//虚拟机存量归零
 	vmSize = 0;
 	//获取性价比
@@ -166,7 +202,7 @@ void DataManager::init(unsigned int dayCounts)
 				/ double(i->second.memory);*/
 		performance[i->first] = double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
 			/ double(i->second.cores) + double(i->second.price + int(i->second.costPerDay) * int(dayCounts) * 0.8)
-			/ double(i->second.memory) + 40 * max(i->second.cores / i->second.memory, i->second.memory / i->second.cores);
+			/ double(i->second.memory) + 0 * max(i->second.cores / i->second.memory, i->second.memory / i->second.cores);
 		pfmList.emplace_back(i->first);
 		ratioList.emplace_back(i->first);
 	}

@@ -426,30 +426,32 @@ bool Controller::myFind(unsigned vmwareID, pair<int, int>& goal, int jumpSeq = -
 【函数功能】处理每天的请求信息，获取每天的操作
 ****************************************/
 void Controller::CreateList()
-{
+{ 
 	init();
 	for (unsigned int i = 0; i < dataManager.dayCounts; i++) {
 		//第i天
 #if isVisual
 		if (i % 50 == 0) {
-			cout << i << endl;
+		cout << i << endl;
 		}
 #endif
 		unsigned int purchaseCount = 0;
-		//先找到该天需要删除的所有服务器
+		//先找到当天需要删除的所有服务器
 		unordered_set<unsigned> delList;
-		for (unsigned int j = 0; j < dataManager.requestList[i].size(); j++) {
-			//第j个请求
-			RequestType request = dataManager.requestList[i][j];
-			if (!request.isAdd)
-				delList.insert(request.ID);
+		for (unsigned k = i; k < i + 1 && k < dataManager.tempDay; k++) {
+			for (unsigned int j = 0; j < dataManager.requestList[k].size(); j++) {
+				//第j个请求
+				RequestType request = dataManager.requestList[k][j];
+				if (!request.isAdd)
+					delList.insert(request.ID);
+			}
 		}
 		//进行迁移
 		int moveNum = 1;
 		//遍历需要迁移的虚拟机列表
 		for (auto iter = waitMoveV.begin(); iter != waitMoveV.end();) {
 			//超过每天可移动虚拟机数量上限，跳出循环
-			if (moveNum > int(dataManager.vmSize * 0.005))
+			if (moveNum > int(dataManager.vmSize * moveRatio))
 				break;
 			//如果当前虚拟机即将删除，跳过
 			if (delList.find(*iter) != delList.end()) {
@@ -505,7 +507,7 @@ void Controller::CreateList()
 			bool success = true;
 			//清空A节点上的虚拟机
 			for (int jk = 0; jk < dataManager.serverList[*iter].GetA().vmwares.size(); jk++) {
-				if (moveNum > int(dataManager.vmSize * 0.005))
+				if (moveNum > int(dataManager.vmSize * moveRatio))
 					break;
 				//如果当前虚拟机即将删除，跳过
 				if (delList.find(dataManager.serverList[*iter].GetA().vmwares[jk]) != delList.end()) {
@@ -530,7 +532,7 @@ void Controller::CreateList()
 			}
 			//清空B节点上的虚拟机
 			for (int jk = 0; jk < dataManager.serverList[*iter].GetB().vmwares.size(); jk++) {
-				if (moveNum > int(dataManager.vmSize * 0.005))
+				if (moveNum > int(dataManager.vmSize * moveRatio))
 					break;
 				//如果当前虚拟机即将删除，跳过
 				if (delList.find(dataManager.serverList[*iter].GetB().vmwares[jk]) != delList.end()) {
@@ -604,6 +606,9 @@ void Controller::CreateList()
 						server.AddVmwareD(request.ID);
 					else
 						server.AddVmwareA(request.ID);
+					if (fabs(logf(float(server.GetA().unusedCores) / float(server.GetA().unusedMemory))) > threMove ||
+						fabs(logf(float(server.GetB().unusedCores) / float(server.GetB().unusedMemory))) > threMove)
+						waitMoveV.emplace_back(request.ID);
 					//添加新增服务器到列表
 #if isVisual
 					dataManager.newList[i].emplace_back(server);
@@ -655,5 +660,13 @@ void Controller::CreateList()
 			dataManager.serverIDList[j] = purchaseIDList[name];
 			purchaseIDList[name]++;
 		}
+		//输出当天的操作
+		dataManager.myWrite(i);
+		//清空缓存区
+#if !isVisual
+		fflush(stdout);
+#endif
+		//读入新的的请求信息
+		dataManager.readRequests();
 	}
 }

@@ -14,9 +14,6 @@ class Server;
 class Controller;
 extern DataManager dataManager;
 
-//每日能耗成本系数
-const unsigned int valueCoeff = 1000;
-
 //服务器类型
 struct ServerType
 {
