@@ -259,9 +259,7 @@ bool Controller::myFind(unsigned vmwareID, pair<int, int>& goal, int jumpSeq = -
 					continue;
 				}
 				//获取AB节点没有使用部分的核存比，选取核存比和目标虚拟机核存比差距最小的服务器
-				float ratioA = logf(float(server.GetA().unusedCores) / float(server.GetA().unusedMemory));
-				float ratioB = logf(float(server.GetB().unusedCores) / float(server.GetB().unusedMemory));
-				float mDelta = fabs(ratioA - target) > fabs(ratioB - target) ? fabs(ratioA - target) : fabs(ratioB - target);
+				float mDelta = fabs(server.GetA().ratio - target) > fabs(server.GetB().ratio - target) ? fabs(server.GetA().ratio - target) : fabs(server.GetB().ratio - target);
 				if (mDelta < delta) {
 					delta = mDelta;
 					goal = pair<int, int>(*iter, 2);
@@ -591,8 +589,8 @@ void Controller::CreateList()
 					ChangeData temp1 = { server.GetID(),server.GetA().usedCores,server.GetA().usedMemory,server.GetB().usedCores,server.GetB().usedMemory };
 					dataManager.changeList[i].emplace_back(temp1);
 #endif
-					if ((server.GetA().unusedCores < dataManager.minCores || server.GetA().unusedMemory < dataManager.minMemory)
-						&& (server.GetB().unusedCores < dataManager.minCores || server.GetB().unusedMemory < dataManager.minMemory)) {
+					if ((server.GetA().unusedCores < dataManager.minCores && server.GetA().unusedMemory < dataManager.minMemory)
+						&& (server.GetB().unusedCores < dataManager.minCores && server.GetB().unusedMemory < dataManager.minMemory)) {
 						usedServerList.erase(find(usedServerList.begin(), usedServerList.end(), goal.first));
 					}
 				}

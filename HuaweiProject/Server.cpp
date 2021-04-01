@@ -9,6 +9,7 @@ void Server::AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node
 	node.unusedMemory -= memory;
 	node.usedCores += cores;
 	node.usedMemory += memory;
+	node.ratio = logf(float(node.unusedCores) / float(node.unusedMemory));
 }
 
 /************************************
@@ -32,6 +33,7 @@ bool Server::DeleteIntoNode(Vmware& vmware, NodeData& node)
 	node.usedCores -= vmware.myType.cores;
 	node.usedMemory -= vmware.myType.memory;
 	node.vmwares.erase(loca);
+	node.ratio = logf(float(node.unusedCores) / float(node.unusedMemory));
 	return true;
 }
 
@@ -42,6 +44,8 @@ Server::Server(ServerType serverType):myType(serverType)
 	nodeA = { 0,myType.cores,0,myType.memory };
 	nodeB = { 0,myType.cores,0,myType.memory };
 	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
+	ratioA = logf(float(nodeA.unusedCores) / float(nodeA.unusedMemory));
+	ratioB = logf(float(nodeB.unusedCores) / float(nodeB.unusedMemory));
 }
 
 bool Server::AddVmwareA(unsigned int vmwareid)

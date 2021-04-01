@@ -11,6 +11,7 @@ private:
 	const unsigned thre = 190;					  //删除虚拟机后是否清空的最大内存和CPU	
 	const float threMove = logf(25);		      //是否迁移的阈值	
 	const float moveRatio = 0.03;                 //每天可以移动的服务器的占比
+	const float usableRatio = 1;                  //是否可用阈值系数
 	unordered_map<string, string> vmwareToServer; //虚拟机型号对应购买服务器型号的映射
 	vector<unsigned> waitMoveS;                   //储存因为使用度太小而需要清空的服务器列表
 	vector<unsigned> waitMoveV;                   //储存因为放入服务器后导致服务器剩余核存比过大或过小而需要迁移的虚拟机列表

@@ -20,6 +20,7 @@ class Server
 	void AddIntoNode(unsigned int cores, unsigned int memory, NodeData& node);
 	//从A/B节点删除核和内存
 	bool DeleteIntoNode(Vmware& vmware, NodeData& node);
+	
 public:
 	//使用度
 	unsigned usuage;

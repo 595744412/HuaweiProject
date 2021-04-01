@@ -118,6 +118,8 @@ struct NodeData
 	unsigned int unusedMemory;
 	//已存放虚拟机
 	vector<unsigned int> vmwares;
+	//核存比
+	float ratio;
 };
 
 //迁移操作数据
