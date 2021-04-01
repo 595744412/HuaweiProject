@@ -44,8 +44,8 @@ Server::Server(ServerType serverType):myType(serverType)
 	nodeA = { 0,myType.cores,0,myType.memory };
 	nodeB = { 0,myType.cores,0,myType.memory };
 	usuage = nodeA.usedCores + nodeA.usedMemory + nodeB.usedCores + nodeB.usedMemory;
-	ratioA = logf(float(nodeA.unusedCores) / float(nodeA.unusedMemory));
-	ratioB = logf(float(nodeB.unusedCores) / float(nodeB.unusedMemory));
+	nodeA.ratio = logf(float(nodeA.unusedCores) / float(nodeA.unusedMemory));
+	nodeB.ratio = logf(float(nodeB.unusedCores) / float(nodeB.unusedMemory));
 }
 
 bool Server::AddVmwareA(unsigned int vmwareid)
